@@ -41,6 +41,7 @@
 #include <linux/memcontrol.h>
 #include <linux/delayacct.h>
 #include <linux/sysctl.h>
+#include <linux/page_cgroup.h>
 #include <linux/oom.h>
 #include <linux/prefetch.h>
 
@@ -1214,15 +1215,16 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 
 		switch (__isolate_lru_page(page, mode, file)) {
 		case 0:
-			list_move(&page->lru, dst);
+			/* verify that it's not on any cgroups */
 			mem_cgroup_del_lru(page);
+			list_move(&page->lru, dst);
 			nr_taken += hpage_nr_pages(page);
 			break;
 
 		case -EBUSY:
 			/* else it is being freed elsewhere */
-			list_move(&page->lru, src);
 			mem_cgroup_rotate_lru_list(page, page_lru(page));
+			list_move(&page->lru, src);
 			continue;
 
 		default:
@@ -1273,8 +1275,9 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 				break;
 
 			if (__isolate_lru_page(cursor_page, mode, file) == 0) {
-				list_move(&cursor_page->lru, dst);
+				/* verify that it's not on any cgroup */
 				mem_cgroup_del_lru(cursor_page);
+				list_move(&cursor_page->lru, dst);
 				nr_taken += hpage_nr_pages(page);
 				nr_lumpy_taken++;
 				if (PageDirty(cursor_page))
@@ -1674,6 +1677,7 @@ static void move_active_pages_to_lru(struct zone *zone,
 	unsigned long pgmoved = 0;
 	struct pagevec pvec;
 	struct page *page;
+	struct page_cgroup *pc;
 
 	pagevec_init(&pvec, 1);
 
@@ -1683,9 +1687,15 @@ static void move_active_pages_to_lru(struct zone *zone,
 		VM_BUG_ON(PageLRU(page));
 		SetPageLRU(page);
 
-		list_move(&page->lru, &zone->lru[lru].list);
-		mem_cgroup_add_lru_list(page, lru);
-		pgmoved += hpage_nr_pages(page);
+		pc = lookup_page_cgroup(page);
+		smp_rmb();
+		if (!PageCgroupAcctLRU(pc)) {
+			list_move(&page->lru, &zone->lru[lru].list);
+			pgmoved += hpage_nr_pages(page);
+		} else {
+			list_del_init(&page->lru);
+			mem_cgroup_add_lru_list(page, lru);
+		}
 
 		if (!pagevec_add(&pvec, page) || list_empty(list)) {
 			spin_unlock_irq(&zone->lru_lock);

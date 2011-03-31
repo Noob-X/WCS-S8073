@@ -891,17 +891,17 @@ EXPORT_SYMBOL(mem_cgroup_count_vm_event);
  * When moving account, the page is not on LRU. It's isolated.
  */
 
-void mem_cgroup_del_lru_list(struct page *page, enum lru_list lru)
+bool mem_cgroup_del_lru_list(struct page *page, enum lru_list lru)
 {
 	struct page_cgroup *pc;
 	struct mem_cgroup_per_zone *mz;
 
 	if (mem_cgroup_disabled())
-		return;
+		return false;
 	pc = lookup_page_cgroup(page);
 	/* can happen while we handle swapcache. */
 	if (!TestClearPageCgroupAcctLRU(pc))
-		return;
+		return false;
 	VM_BUG_ON(!pc->mem_cgroup);
 	/*
 	 * We don't check PCG_USED bit. It's cleared when the "page" is finally
@@ -909,16 +909,16 @@ void mem_cgroup_del_lru_list(struct page *page, enum lru_list lru)
 	 */
 	mz = page_cgroup_zoneinfo(pc->mem_cgroup, page);
 	/* huge page split is done under lru_lock. so, we have no races. */
-	MEM_CGROUP_ZSTAT(mz, lru) -= 1 << compound_order(page);
 	if (mem_cgroup_is_root(pc->mem_cgroup))
-		return;
-	VM_BUG_ON(list_empty(&pc->lru));
-	list_del_init(&pc->lru);
+		return false;
+	MEM_CGROUP_ZSTAT(mz, lru) -= 1 << compound_order(page);
+	list_del_init(&page->lru);
+	return true;
 }
 
-void mem_cgroup_del_lru(struct page *page)
+bool mem_cgroup_del_lru(struct page *page)
 {
-	mem_cgroup_del_lru_list(page, page_lru(page));
+	return mem_cgroup_del_lru_list(page, page_lru(page));
 }
 
 /*
@@ -944,7 +944,7 @@ void mem_cgroup_rotate_reclaimable_page(struct page *page)
 	if (mem_cgroup_is_root(pc->mem_cgroup))
 		return;
 	mz = page_cgroup_zoneinfo(pc->mem_cgroup, page);
-	list_move_tail(&pc->lru, &mz->lists[lru]);
+	list_move(&page->lru, &mz->lists[lru]);
 }
 
 void mem_cgroup_rotate_lru_list(struct page *page, enum lru_list lru)
@@ -964,16 +964,16 @@ void mem_cgroup_rotate_lru_list(struct page *page, enum lru_list lru)
 	if (mem_cgroup_is_root(pc->mem_cgroup))
 		return;
 	mz = page_cgroup_zoneinfo(pc->mem_cgroup, page);
-	list_move(&pc->lru, &mz->lists[lru]);
+	list_move(&page->lru, &mz->lists[lru]);
 }
 
-void mem_cgroup_add_lru_list(struct page *page, enum lru_list lru)
+bool mem_cgroup_add_lru_list(struct page *page, enum lru_list lru)
 {
 	struct page_cgroup *pc;
 	struct mem_cgroup_per_zone *mz;
 
 	if (mem_cgroup_disabled())
-		return;
+		return false;
 	pc = lookup_page_cgroup(page);
 	VM_BUG_ON(PageCgroupAcctLRU(pc));
 	/*
@@ -987,16 +987,17 @@ void mem_cgroup_add_lru_list(struct page *page, enum lru_list lru)
 	 */
 	smp_mb();
 	if (!PageCgroupUsed(pc))
-		return;
+		return false;
 	/* Ensure pc->mem_cgroup is visible after reading PCG_USED. */
 	smp_rmb();
 	mz = page_cgroup_zoneinfo(pc->mem_cgroup, page);
 	/* huge page split is done under lru_lock. so, we have no races. */
-	MEM_CGROUP_ZSTAT(mz, lru) += 1 << compound_order(page);
 	SetPageCgroupAcctLRU(pc);
 	if (mem_cgroup_is_root(pc->mem_cgroup))
-		return;
-	list_add(&pc->lru, &mz->lists[lru]);
+		return false;
+	MEM_CGROUP_ZSTAT(mz, lru) += 1 << compound_order(page);
+	list_add(&page->lru, &mz->lists[lru]);
+	return true;
 }
 
 /*
@@ -1292,11 +1293,11 @@ unsigned long mem_cgroup_isolate_pages(unsigned long nr_to_scan,
 					int active, int file)
 {
 	unsigned long nr_taken = 0;
-	struct page *page;
+	struct page *page, *tmp;
 	unsigned long scan;
 	LIST_HEAD(pc_list);
 	struct list_head *src;
-	struct page_cgroup *pc, *tmp;
+	struct page_cgroup *pc;
 	int nid = zone_to_nid(z);
 	int zid = zone_idx(z);
 	struct mem_cgroup_per_zone *mz;
@@ -1308,24 +1309,24 @@ unsigned long mem_cgroup_isolate_pages(unsigned long nr_to_scan,
 	src = &mz->lists[lru];
 
 	scan = 0;
-	list_for_each_entry_safe_reverse(pc, tmp, src, lru) {
+	list_for_each_entry_safe_reverse(page, tmp, src, lru) {
+		pc = lookup_page_cgroup(page);
 		if (scan >= nr_to_scan)
 			break;
 
 		if (unlikely(!PageCgroupUsed(pc)))
 			continue;
-
-		page = lookup_cgroup_page(pc);
-
 		if (unlikely(!PageLRU(page)))
 			continue;
+
+		BUG_ON(!PageCgroupAcctLRU(pc));
 
 		scan++;
 		ret = __isolate_lru_page(page, mode, file);
 		switch (ret) {
 		case 0:
-			list_move(&page->lru, dst);
 			mem_cgroup_del_lru(page);
+			list_add(&page->lru, dst);
 			nr_taken += hpage_nr_pages(page);
 			break;
 		case -EBUSY:
@@ -3784,6 +3785,7 @@ static int mem_cgroup_force_empty_list(struct mem_cgroup *mem,
 	struct page_cgroup *pc, *busy;
 	unsigned long flags, loop;
 	struct list_head *list;
+	struct page *page;
 	int ret = 0;
 
 	zone = &NODE_DATA(node)->node_zones[zid];
@@ -3795,24 +3797,22 @@ static int mem_cgroup_force_empty_list(struct mem_cgroup *mem,
 	loop += 256;
 	busy = NULL;
 	while (loop--) {
-		struct page *page;
-
 		ret = 0;
 		spin_lock_irqsave(&zone->lru_lock, flags);
 		if (list_empty(list)) {
 			spin_unlock_irqrestore(&zone->lru_lock, flags);
 			break;
 		}
-		pc = list_entry(list->prev, struct page_cgroup, lru);
+		page = list_entry(list->prev, struct page, lru);
+		pc = lookup_page_cgroup(page);
 		if (busy == pc) {
-			list_move(&pc->lru, list);
+			/* XXX what should we do here? */
+			list_move(&page->lru, list);
 			busy = NULL;
 			spin_unlock_irqrestore(&zone->lru_lock, flags);
 			continue;
 		}
 		spin_unlock_irqrestore(&zone->lru_lock, flags);
-
-		page = lookup_cgroup_page(pc);
 
 		ret = mem_cgroup_move_parent(page, pc, mem, GFP_KERNEL);
 		if (ret == -ENOMEM)
