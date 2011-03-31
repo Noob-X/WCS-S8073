@@ -63,11 +63,11 @@ extern void mem_cgroup_cancel_charge_swapin(struct mem_cgroup *ptr);
 
 extern int mem_cgroup_cache_charge(struct page *page, struct mm_struct *mm,
 					gfp_t gfp_mask);
-extern void mem_cgroup_add_lru_list(struct page *page, enum lru_list lru);
-extern void mem_cgroup_del_lru_list(struct page *page, enum lru_list lru);
+extern bool mem_cgroup_add_lru_list(struct page *page, enum lru_list lru);
+extern bool mem_cgroup_del_lru_list(struct page *page, enum lru_list lru);
 extern void mem_cgroup_rotate_reclaimable_page(struct page *page);
 extern void mem_cgroup_rotate_lru_list(struct page *page, enum lru_list lru);
-extern void mem_cgroup_del_lru(struct page *page);
+extern bool mem_cgroup_del_lru(struct page *page);
 extern void mem_cgroup_move_lists(struct page *page,
 				  enum lru_list from, enum lru_list to);
 
@@ -216,13 +216,14 @@ static inline int mem_cgroup_shmem_charge_fallback(struct page *page,
 	return 0;
 }
 
-static inline void mem_cgroup_add_lru_list(struct page *page, int lru)
+static inline bool mem_cgroup_add_lru_list(struct page *page, int lru)
 {
+	return false;
 }
 
-static inline void mem_cgroup_del_lru_list(struct page *page, int lru)
+static inline bool mem_cgroup_del_lru_list(struct page *page, int lru)
 {
-	return ;
+	return false;
 }
 
 static inline void mem_cgroup_rotate_reclaimable_page(struct page *page)
@@ -235,9 +236,9 @@ static inline void mem_cgroup_rotate_lru_list(struct page *page, int lru)
 	return ;
 }
 
-static inline void mem_cgroup_del_lru(struct page *page)
+static inline bool mem_cgroup_del_lru(struct page *page)
 {
-	return ;
+	return false;
 }
 
 static inline void

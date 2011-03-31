@@ -31,6 +31,7 @@
 #include <linux/backing-dev.h>
 #include <linux/memcontrol.h>
 #include <linux/gfp.h>
+#include <linux/page_cgroup.h>
 
 #include "internal.h"
 
@@ -235,10 +236,17 @@ static void pagevec_move_tail_fn(struct page *page, void *arg)
 	struct zone *zone = page_zone(page);
 
 	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
-		enum lru_list lru = page_lru_base_type(page);
-		list_move_tail(&page->lru, &zone->lru[lru].list);
+		struct page_cgroup *pc;
+    	enum lru_list lru = page_lru_base_type(page);
+
 		mem_cgroup_rotate_reclaimable_page(page);
-		(*pgmoved)++;
+		pc = lookup_page_cgroup(page);
+		smp_rmb();
+		if (!PageCgroupAcctLRU(pc)) {
+			list_move_tail(&page->lru,
+				       &zone->lru[lru].list);
+			(*pgmoved)++;
+			}
 	}
 }
 
