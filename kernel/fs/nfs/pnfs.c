@@ -918,7 +918,7 @@ pnfs_find_lseg(struct pnfs_layout_hdr *lo,
  * Layout segment is retreived from the server if not cached.
  * The appropriate layout segment is referenced and returned to the caller.
  */
-static struct pnfs_layout_segment *
+struct pnfs_layout_segment *
 pnfs_update_layout(struct inode *ino,
 		   struct nfs_open_context *ctx,
 		   loff_t pos,
@@ -1006,6 +1006,7 @@ out_unlock:
 	spin_unlock(&ino->i_lock);
 	goto out;
 }
+EXPORT_SYMBOL_GPL(pnfs_update_layout);
 
 int
 pnfs_layout_process(struct nfs4_layoutget *lgp)
