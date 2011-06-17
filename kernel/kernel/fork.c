@@ -1576,7 +1576,7 @@ long do_fork(unsigned long clone_flags,
 			freezer_do_not_count();
 			wait_for_completion(&vfork);
 			freezer_count();
-			tracehook_report_vfork_done(p, nr);
+			ptrace_event(PTRACE_EVENT_VFORK_DONE, nr);
 		}
 #ifdef CONFIG_SCHEDSTATS
         /* mt shceduler profiling*/
