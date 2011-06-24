@@ -2644,6 +2644,7 @@ static void ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
 			    ssize_t size, void *private, int ret,
 			    bool is_async)
 {
+	struct inode *inode = iocb->ki_filp->f_path.dentry->d_inode;
         ext4_io_end_t *io_end = iocb->private;
 	struct workqueue_struct *wq;
 	unsigned long flags;
@@ -2665,6 +2666,7 @@ static void ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
 out:
 		if (is_async)
 			aio_complete(iocb, ret, 0);
+		inode_dio_done(inode);
 		return;
 	}
 
@@ -2685,6 +2687,9 @@ out:
 	/* queue the work to convert unwritten extents to written */
 	queue_work(wq, &io_end->work);
 	iocb->private = NULL;
+
+	/* XXX: probably should move into the real I/O completion handler */
+	inode_dio_done(inode);
 }
 
 static void ext4_end_io_buffer_write(struct buffer_head *bh, int uptodate)
