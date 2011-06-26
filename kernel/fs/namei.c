@@ -665,7 +665,7 @@ static int follow_automount(struct path *path, unsigned flags,
 	/* We don't want to mount if someone supplied AT_NO_AUTOMOUNT
 	 * and this is the terminal part of the path.
 	 */
-	if ((flags & LOOKUP_NO_AUTOMOUNT) && !(flags & LOOKUP_CONTINUE))
+	if ((flags & LOOKUP_NO_AUTOMOUNT) && !(flags & LOOKUP_PARENT))
 		return -EISDIR; /* we actually want to stop here */
 
 	/* We don't want to mount if someone's just doing a stat -
@@ -679,7 +679,7 @@ static int follow_automount(struct path *path, unsigned flags,
 	 * as being automount points.  These will need the attentions
 	 * of the daemon to instantiate them before they can be used.
 	 */
-	if (!(flags & (LOOKUP_CONTINUE | LOOKUP_DIRECTORY |
+	if (!(flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
 		     LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
 	    path->dentry->d_inode)
 		return -EISDIR;
@@ -699,7 +699,7 @@ static int follow_automount(struct path *path, unsigned flags,
 		 * the path being looked up; if it wasn't then the remainder of
 		 * the path is inaccessible and we should say so.
 		 */
-		if (PTR_ERR(mnt) == -EISDIR && (flags & LOOKUP_CONTINUE))
+		if (PTR_ERR(mnt) == -EISDIR && (flags & LOOKUP_PARENT))
 			return -EREMOTE;
 		return PTR_ERR(mnt);
 	}
@@ -1469,7 +1469,6 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 {
 	struct path next;
 	int err;
-	unsigned int lookup_flags = nd->flags;
 	
 	while (*name=='/')
 		name++;
@@ -1481,8 +1480,6 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 		struct qstr this;
 		long len;
 		int type;
-
-		nd->flags |= LOOKUP_CONTINUE;
 
 		err = may_lookup(nd);
  		if (err)
@@ -1543,8 +1540,6 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 		/* here ends the main loop */
 
 last_component:
-		/* Clear LOOKUP_CONTINUE iff it was previously unset */
-		nd->flags &= lookup_flags | ~LOOKUP_CONTINUE;
 		nd->last = this;
 		nd->last_type = type;
 		return 0;
