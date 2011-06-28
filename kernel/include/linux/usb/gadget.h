@@ -137,6 +137,8 @@ struct usb_ep_ops {
  *	value can sometimes be reduced (hardware allowing), according to
  *      the endpoint descriptor used to configure the endpoint.
  * @driver_data:for use by the gadget driver.
+ * @address: used to identify the endpoint when finding descriptor that
+ *	matches connection speed
  * @desc: endpoint descriptor.  This pointer is set before the endpoint is
  *	enabled and remains valid until the endpoint is disabled.
  *
@@ -151,6 +153,7 @@ struct usb_ep {
 	const struct usb_ep_ops	*ops;
 	struct list_head	ep_list;
 	unsigned		maxpacket:16;
+	u8			address;
 	const struct usb_endpoint_descriptor	*desc;
 };
 
