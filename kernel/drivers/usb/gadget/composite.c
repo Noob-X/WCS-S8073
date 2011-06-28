@@ -514,10 +514,18 @@ static int set_config(struct usb_composite_dev *cdev,
 	INFO(cdev, "%s speed config #%d: %s\n",
 		({ char *speed;
 		switch (gadget->speed) {
-		case USB_SPEED_LOW:	speed = "low"; break;
-		case USB_SPEED_FULL:	speed = "full"; break;
-		case USB_SPEED_HIGH:	speed = "high"; break;
-		default:		speed = "?"; break;
+		case USB_SPEED_LOW:
+			speed = "low";
+			break;
+		case USB_SPEED_FULL:
+			speed = "full";
+			break;
+		case USB_SPEED_HIGH:
+			speed = "high";
+			break;
+		default:
+			speed = "?";
+			break;
 		} ; speed; }), number, c ? c->label : "unconfigured");
 
 	USB_LOGGER(SET_CONFIG, SET_CONFIG, gadget->speed, number, \
