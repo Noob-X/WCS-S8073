@@ -461,6 +461,7 @@ static inline int usb_ep_dequeue_all(struct usb_ep *ep, struct usb_request *req)
 /*-------------------------------------------------------------------------*/
 
 struct usb_gadget;
+struct usb_gadget_driver;
 
 /* the rest of the api to the controller hardware: device operations,
  * which don't involve endpoints (or i/o).
@@ -474,6 +475,9 @@ struct usb_gadget_ops {
 	int	(*pullup) (struct usb_gadget *, int is_on);
 	int	(*ioctl)(struct usb_gadget *,
 				unsigned code, unsigned long param);
+	int	(*start)(struct usb_gadget_driver *,
+			int (*bind)(struct usb_gadget *));
+	int	(*stop)(struct usb_gadget_driver *);
 };
 
 /**
@@ -864,6 +868,9 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
  * will in in exit sections, so may not be linked in some kernels.
  */
 int usb_gadget_unregister_driver(struct usb_gadget_driver *driver);
+
+extern int usb_add_gadget_udc(struct device *parent, struct usb_gadget *gadget);
+extern void usb_del_gadget_udc(struct usb_gadget *gadget);
 
 /*-------------------------------------------------------------------------*/
 
