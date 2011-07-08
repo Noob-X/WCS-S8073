@@ -44,9 +44,10 @@ EXPORT_SYMBOL_GPL(unregister_pm_notifier);
 
 int pm_notifier_call_chain(unsigned long val)
 {
-    pr_info("[%s]: there are %u notify callbacks, event = %lu\n", __func__, notify_count, val);
-    return (blocking_notifier_call_chain(&pm_chain_head, val, NULL)
-            == NOTIFY_BAD) ? -EINVAL : 0;
+	pr_info("[%s]: there are %u notify callbacks, event = %lu\n", __func__, notify_count, val);
+	int ret = blocking_notifier_call_chain(&pm_chain_head, val, NULL);
+
+	return notifier_to_errno(ret);
 }
 
 /* If set, devices may be suspended and resumed asynchronously. */
