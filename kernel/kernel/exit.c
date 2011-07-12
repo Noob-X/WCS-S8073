@@ -920,7 +920,6 @@ NORET_TYPE void do_exit(long code)
 	end_mtproc_info(tsk);
 #endif
 
-	WARN_ON(atomic_read(&tsk->fs_excl));
 	WARN_ON(blk_needs_flush_plug(tsk));
 
 	if (unlikely(in_interrupt()))
