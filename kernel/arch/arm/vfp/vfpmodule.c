@@ -14,7 +14,6 @@
  * commit:5e4ba617c1b584b2e376f31a63bd4e734109318a
  * ARM: VFP: fix emulation of second VFP instruction
  */
-#include <linux/module.h>
 #include <linux/types.h>
 #include <linux/cpu.h>
 #include <linux/cpu_pm.h>
