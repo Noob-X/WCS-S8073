@@ -206,6 +206,9 @@ config ARM_PATCH_PHYS_VIRT
 	  This can only be used with non-XIP MMU kernels where the base
 	  of physical memory is at a 16MB boundary.
 
+config GENERIC_BUG
+	def_bool y
+	depends on BUG
 
 source "init/Kconfig"
 
