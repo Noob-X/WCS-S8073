@@ -59,7 +59,7 @@ static const char *isa_modes[] = {
   "ARM" , "Thumb" , "Jazelle", "ThumbEE"
 };
 
-extern void setup_mm_for_reboot(char mode);
+extern void setup_mm_for_reboot(void);
 
 static volatile int hlt_counter;
 
@@ -146,7 +146,7 @@ void arm_machine_restart(char mode, const char *cmd)
 	 * we may need it to insert some 1:1 mappings so that
 	 * soft boot works.
 	 */
-	setup_mm_for_reboot(mode);
+	setup_mm_for_reboot();
         
         /* When l1 is disabled and l2 is enabled, the spinlock cannot get the lock,
          * so we need to disable the l2 as well. by Chia-Hao Hsu
