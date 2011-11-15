@@ -67,6 +67,7 @@ ENDPROC(cpu_v7_proc_fin)
  *      caches disabled.
  */
 	.align	5
+	.pushsection	.idmap.text, "ax"
 ENTRY(cpu_v7_reset)
 	mrc	p15, 0, r1, c1, c0, 0		@ ctrl register
 	bic	r1, r1, #0x1			@ ...............m
@@ -75,6 +76,7 @@ ENTRY(cpu_v7_reset)
 	isb
 	mov	pc, r0
 ENDPROC(cpu_v7_reset)
+	.popsection
 
 /*
  *	cpu_v7_do_idle()
