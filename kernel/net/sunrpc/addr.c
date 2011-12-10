@@ -20,7 +20,7 @@
 #include <linux/sunrpc/clnt.h>
 #include <linux/slab.h>
 
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 
 static size_t rpc_ntop6_noscopeid(const struct sockaddr *sap,
 				  char *buf, const int buflen)
@@ -90,7 +90,7 @@ static size_t rpc_ntop6(const struct sockaddr *sap,
 	return len;
 }
 
-#else	/* !(defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)) */
+#else	/* !IS_ENABLED(CONFIG_IPV6) */
 
 static size_t rpc_ntop6_noscopeid(const struct sockaddr *sap,
 				  char *buf, const int buflen)
@@ -104,7 +104,7 @@ static size_t rpc_ntop6(const struct sockaddr *sap,
 	return 0;
 }
 
-#endif	/* !(defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)) */
+#endif	/* !IS_ENABLED(CONFIG_IPV6) */
 
 static int rpc_ntop4(const struct sockaddr *sap,
 		     char *buf, const size_t buflen)
@@ -154,7 +154,7 @@ static size_t rpc_pton4(const char *buf, const size_t buflen,
 	return sizeof(struct sockaddr_in);
 }
 
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 static int rpc_parse_scope_id(const char *buf, const size_t buflen,
 			      const char *delim, struct sockaddr_in6 *sin6)
 {

@@ -147,7 +147,7 @@ int netlbl_cfg_unlbl_map_add(const char *domain,
 				goto cfg_unlbl_map_add_failure;
 			break;
 			}
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 		case AF_INET6: {
 			const struct in6_addr *addr6 = addr;
 			const struct in6_addr *mask6 = mask;
@@ -227,7 +227,7 @@ int netlbl_cfg_unlbl_static_add(struct net *net,
 	case AF_INET:
 		addr_len = sizeof(struct in_addr);
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		addr_len = sizeof(struct in6_addr);
 		break;
@@ -270,7 +270,7 @@ int netlbl_cfg_unlbl_static_del(struct net *net,
 	case AF_INET:
 		addr_len = sizeof(struct in_addr);
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		addr_len = sizeof(struct in6_addr);
 		break;
@@ -669,7 +669,7 @@ int netlbl_sock_setattr(struct sock *sk,
 			ret_val = -ENOENT;
 		}
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		/* since we don't support any IPv6 labeling protocols right
 		 * now we can optimize everything away until we do */
@@ -720,7 +720,7 @@ int netlbl_sock_getattr(struct sock *sk,
 	case AF_INET:
 		ret_val = cipso_v4_sock_getattr(sk, secattr);
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		ret_val = -ENOMSG;
 		break;
@@ -778,7 +778,7 @@ int netlbl_conn_setattr(struct sock *sk,
 			ret_val = -ENOENT;
 		}
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		/* since we don't support any IPv6 labeling protocols right
 		 * now we can optimize everything away until we do */
@@ -849,7 +849,7 @@ int netlbl_req_setattr(struct request_sock *req,
 			ret_val = -ENOENT;
 		}
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		/* since we don't support any IPv6 labeling protocols right
 		 * now we can optimize everything away until we do */
@@ -922,7 +922,7 @@ int netlbl_skbuff_setattr(struct sk_buff *skb,
 			ret_val = -ENOENT;
 		}
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		/* since we don't support any IPv6 labeling protocols right
 		 * now we can optimize everything away until we do */
@@ -961,7 +961,7 @@ int netlbl_skbuff_getattr(const struct sk_buff *skb,
 		    cipso_v4_skbuff_getattr(skb, secattr) == 0)
 			return 0;
 		break;
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+#if IS_ENABLED(CONFIG_IPV6)
 	case AF_INET6:
 		break;
 #endif /* IPv6 */
