@@ -508,7 +508,7 @@ static void mem_cgroup_remove_from_trees(struct mem_cgroup *mem)
 	struct mem_cgroup_per_zone *mz;
 	struct mem_cgroup_tree_per_zone *mctz;
 
-	for_each_node_state(node, N_POSSIBLE) {
+	for_each_node(node) {
 		for (zone = 0; zone < MAX_NR_ZONES; zone++) {
 			mz = mem_cgroup_zoneinfo(mem, node, zone);
 			mctz = soft_limit_tree_node_zone(node, zone);
@@ -4945,7 +4945,7 @@ static void __mem_cgroup_free(struct mem_cgroup *mem)
 	mem_cgroup_remove_from_trees(mem);
 	free_css_id(&mem_cgroup_subsys, &mem->css);
 
-	for_each_node_state(node, N_POSSIBLE)
+	for_each_node(node)
 		free_mem_cgroup_per_zone_info(mem, node);
 
 	free_percpu(mem->stat);
@@ -5003,7 +5003,7 @@ static int mem_cgroup_soft_limit_tree_init(void)
 	struct mem_cgroup_tree_per_zone *rtpz;
 	int tmp, node, zone;
 
-	for_each_node_state(node, N_POSSIBLE) {
+	for_each_node(node) {
 		tmp = node;
 		if (!node_state(node, N_NORMAL_MEMORY))
 			tmp = -1;
@@ -5022,7 +5022,7 @@ static int mem_cgroup_soft_limit_tree_init(void)
 	return 0;
 
 err_cleanup:
-	for_each_node_state(node, N_POSSIBLE) {
+	for_each_node(node) {
 		if (!soft_limit_tree.rb_tree_per_node[node])
 			break;
 		kfree(soft_limit_tree.rb_tree_per_node[node]);
@@ -5043,7 +5043,7 @@ mem_cgroup_create(struct cgroup_subsys *ss, struct cgroup *cont)
 	if (!mem)
 		return ERR_PTR(error);
 
-	for_each_node_state(node, N_POSSIBLE)
+	for_each_node(node)
 		if (alloc_mem_cgroup_per_zone_info(mem, node))
 			goto free_out;
 
