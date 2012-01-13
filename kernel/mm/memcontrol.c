@@ -598,16 +598,6 @@ static void mem_cgroup_swap_statistics(struct mem_cgroup *mem,
 	this_cpu_add(mem->stat->count[MEM_CGROUP_STAT_SWAPOUT], val);
 }
 
-void mem_cgroup_pgfault(struct mem_cgroup *mem, int val)
-{
-	this_cpu_add(mem->stat->events[MEM_CGROUP_EVENTS_PGFAULT], val);
-}
-
-void mem_cgroup_pgmajfault(struct mem_cgroup *mem, int val)
-{
-	this_cpu_add(mem->stat->events[MEM_CGROUP_EVENTS_PGMAJFAULT], val);
-}
-
 static unsigned long mem_cgroup_read_events(struct mem_cgroup *mem,
 					    enum mem_cgroup_events_index idx)
 {
@@ -873,11 +863,11 @@ void mem_cgroup_count_vm_event(struct mm_struct *mm, enum vm_event_item idx)
 		goto out;
 
 	switch (idx) {
-	case PGMAJFAULT:
-		mem_cgroup_pgmajfault(mem, 1);
-		break;
 	case PGFAULT:
-		mem_cgroup_pgfault(mem, 1);
+		this_cpu_inc(mem->stat->events[MEM_CGROUP_EVENTS_PGFAULT]);
+		break;
+	case PGMAJFAULT:
+		this_cpu_inc(mem->stat->events[MEM_CGROUP_EVENTS_PGMAJFAULT]);
 		break;
 	default:
 		BUG();
