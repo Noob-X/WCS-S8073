@@ -16,3 +16,4 @@ header-y += traps.h
 header-y += uctx.h
 header-y += utrap.h
 header-y += watchdog.h
+generic-y += word-at-a-time.h
