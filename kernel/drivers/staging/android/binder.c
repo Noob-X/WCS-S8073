@@ -867,7 +867,7 @@ static int binder_bwdog_thread(void *__unused)
 /*
  * copied from get_unused_fd_flags
  */
-int task_get_unused_fd_flags(struct binder_proc *proc, int flags)
+static int task_get_unused_fd_flags(struct binder_proc *proc, int flags)
 {
 	struct files_struct *files = proc->files;
 	int fd, error;
