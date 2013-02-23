@@ -1920,7 +1920,6 @@ static void get_scan_count(struct zone *zone, struct scan_control *sc,
 	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(zone, sc);
 	u64 fraction[2], denominator;
 	enum lru_list l;
-	int noswap = 0;
 	bool force_scan = false;
 
 	/*
@@ -1941,8 +1940,33 @@ static void get_scan_count(struct zone *zone, struct scan_control *sc,
 
 	/* If we have no swap space, do not bother scanning anon pages. */
 	if (!sc->may_swap || (nr_swap_pages <= 0)) {
-		noswap = 1;
 		fraction[0] = 0;
+		fraction[1] = 1;
+		denominator = 1;
+		goto out;
+	}
+
+	/*
+	 * Global reclaim will swap to prevent OOM even with no
+	 * swappiness, but memcg users want to use this knob to
+	 * disable swapping for individual groups completely when
+	 * using the memory controller's swap limit feature would be
+	 * too expensive.
+	 */
+	if (!scanning_global_lru(sc) && !sc->swappiness) {
+		fraction[0] = 0;
+		fraction[1] = 1;
+		denominator = 1;
+		goto out;
+	}
+
+	/*
+	 * Do not apply any pressure balancing cleverness when the
+	 * system is close to OOM, scan both anon and file equally
+	 * (unless the swappiness setting disagrees with swapping).
+	 */
+	if (!priority && sc->swappiness) {
+		fraction[0] = 1;
 		fraction[1] = 1;
 		denominator = 1;
 		goto out;
@@ -2019,12 +2043,10 @@ out:
 		unsigned long scan;
 
 		scan = zone_nr_lru_pages(zone, sc, l);
-		if (priority || noswap || !sc->swappiness) {
-			scan >>= priority;
-			if (!scan && force_scan)
-				scan = SWAP_CLUSTER_MAX;
-			scan = div64_u64(scan * fraction[file], denominator);
-		}
+		scan >>= priority;
+		if (!scan && force_scan)
+			scan = SWAP_CLUSTER_MAX;
+		scan = div64_u64(scan * fraction[file], denominator);
 		nr[l] = scan;
 	}
 }
