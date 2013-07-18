@@ -26,6 +26,7 @@
 
 #include <asm/system.h>
 #include <asm/unaligned.h>
+#include <asm/opcodes.h>
 
 #include "fault.h"
 
@@ -768,6 +769,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 /*		fault = __get_user(tinstr, (u16 *)(instrptr & ~1)); */
 		u16 *ptr = (u16 *)(instrptr & ~1);
 		fault = probe_kernel_address(ptr, tinstr);
+		tinstr = __mem_to_opcode_thumb16(tinstr);
 		if (!fault) {
 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
 			    IS_T32(tinstr)) {
@@ -775,17 +777,20 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 				u16 tinst2 = 0;
 /*				fault = __get_user(tinst2, (u16 *)(instrptr+2)); */
 				fault = probe_kernel_address(ptr + 1, tinst2);
-				instr = (tinstr << 16) | tinst2;
+				tinst2 = __mem_to_opcode_thumb16(tinst2);
+				instr = __opcode_thumb32_compose(tinstr, tinst2);
 				thumb2_32b = 1;
 			} else {
 				isize = 2;
 				instr = thumb2arm(tinstr);
 			}
 		}
-	} else
 /*		fault = __get_user(instr, (u32 *)instrptr);
 	set_fs(fs); */
+	} else {
 		fault = probe_kernel_address(instrptr, instr);
+		instr = __mem_to_opcode_arm(instr);
+	}
 
 	if (fault) {
 		type = TYPE_FAULT;
