@@ -1,1 +1,1 @@
-TARGET_PRODUCT=tinno77_ics2 MTK_ROOT_CUSTOM=../mediatek/custom make
+TARGET_PRODUCT=s8073 MTK_ROOT_CUSTOM=../mediatek/custom make
