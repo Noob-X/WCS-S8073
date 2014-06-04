@@ -443,9 +443,6 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
 		if (freepage)
 			freepage(old);
 		page_cache_release(old);
-		mem_cgroup_end_migration(memcg, old, new, true);
-	} else {
-		mem_cgroup_end_migration(memcg, old, new, false);
 	}
 
 	return error;
