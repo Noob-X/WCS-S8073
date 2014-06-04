@@ -405,7 +405,7 @@ static int smaps_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
 			return 0;
 		}
 	} else {
-		spin_unlock(&walk->mm->page_table_lock);
+	    spin_unlock(&walk->mm->page_table_lock);
 	}
 	/*
 	 * The mmap_sem held all the way back in m_start() is what
