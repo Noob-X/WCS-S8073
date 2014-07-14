@@ -1556,7 +1556,7 @@ u64 mem_cgroup_get_limit(struct mem_cgroup *memcg)
 	/*
 	 * Do not consider swap space if we cannot swap due to swappiness
 	 */
-	if (get_swappiness(memcg)) {
+	if (mem_cgroup_swappiness(memcg)) {
 		u64 memsw;
 
 		limit += total_swap_pages << PAGE_SHIFT;

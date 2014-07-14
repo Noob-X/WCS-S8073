@@ -1958,7 +1958,7 @@ static void get_scan_count(struct zone *zone, struct scan_control *sc,
 	 * using the memory controller's swap limit feature would be
 	 * too expensive.
 	 */
-	if (!scanning_global_lru(sc) && !sc->swappiness) {
+	if (!scanning_global_lru(sc) && !vmscan_swappiness(sc)) {
 		fraction[0] = 0;
 		fraction[1] = 1;
 		denominator = 1;
@@ -1970,7 +1970,7 @@ static void get_scan_count(struct zone *zone, struct scan_control *sc,
 	 * system is close to OOM, scan both anon and file equally
 	 * (unless the swappiness setting disagrees with swapping).
 	 */
-	if (!priority && sc->swappiness) {
+	if (!priority && vmscan_swappiness(sc)) {
 		fraction[0] = 1;
 		fraction[1] = 1;
 		denominator = 1;
