@@ -19,7 +19,6 @@
 
 #include <linux/types.h>
 #include <linux/ioctl.h>
-//#include <logger_custom.h>
 
 struct logger_entry {
 	__u16		len;	/* length of the payload */
