@@ -25,7 +25,7 @@
  * This structure is returned to userspace unless the caller requests
  * an upgrade to a newer ABI version.
  */
-+struct user_logger_entry_compat {
+struct user_logger_entry_compat {
 	__u16		len;	/* length of the payload */
 	__u16		__pad;	/* no matter what, we get 2 bytes of padding */
 	__s32		pid;	/* generating process's pid */
