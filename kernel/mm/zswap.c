@@ -228,7 +228,7 @@ static inline int zswap_entry_cache_create(void)
 	return (zswap_entry_cache == NULL);
 }
 
-static inline void zswap_entry_cache_destory(void)
+static void __init zswap_entry_cache_destroy(void)
 {
 	kmem_cache_destroy(zswap_entry_cache);
 }
@@ -1153,7 +1153,7 @@ compfail:
 tmppoolfail:
 	zswap_page_pool_destroy();
 pagepoolfail:
-	zswap_entry_cache_destory();
+	zswap_entry_cache_destroy();
 error:
 	return -ENOMEM;
 }
