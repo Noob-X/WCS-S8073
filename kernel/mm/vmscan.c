@@ -1952,7 +1952,7 @@ static void get_scan_count(struct zone *zone, struct scan_control *sc,
 	 * using the memory controller's swap limit feature would be
 	 * too expensive.
 	 */
-	if (!scanning_global_lru(sc) && !vmscan_swappiness(sc)) {
+	if (!global_reclaim(sc) && !vmscan_swappiness(sc)) {
 		fraction[0] = 0;
 		fraction[1] = 1;
 		denominator = 1;
