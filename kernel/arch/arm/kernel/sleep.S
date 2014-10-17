@@ -37,7 +37,7 @@ ENTRY(cpu_suspend)
 	ldr	r10, =processor
 /*	mov	r2, sp			@ current virtual SP */
 /*	ldr	r0, [r10, #CPU_SLEEP_SIZE] @ size of CPU sleep state */
-        ldr	r5, [r10, #CPU_SLEEP_SIZE] @ size of CPU sleep state
+	ldr	r5, [r10, #CPU_SLEEP_SIZE] @ size of CPU sleep state
 	ldr	ip, [r10, #CPU_DO_RESUME] @ virtual resume function
 #else
 /*	ldr	r0, =cpu_suspend_size */
