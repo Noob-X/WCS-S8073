@@ -27,7 +27,7 @@
  *  r3 = suspend function
  * Note: does not return until system resumes
  */
-ENTRY(__cpu_suspend)
+ENTRY(cpu_suspend)
 	stmfd	sp!, {r4 - r11, lr}
 #ifdef MULTI_CPU
 	ldr	r10, =processor
@@ -97,10 +97,10 @@ ENTRY(__cpu_suspend)
 #else
 /*	mov	lr, r9
 	b	__cpuc_flush_kern_all */
-	bl	__cpuc_flush_kern_all
+        bl	__cpuc_flush_kern_all
 #endif
-	ldmfd	sp!, {r0, pc}		@ call suspend fn
-ENDPROC(__cpu_suspend)
+        ldmfd	sp!, {r0, pc}		@ call suspend fn
+ENDPROC(cpu_suspend)
 	.ltorg
 
 /*
