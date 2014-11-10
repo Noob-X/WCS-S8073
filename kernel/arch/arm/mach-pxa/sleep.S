@@ -35,11 +35,9 @@ ENTRY(pxa3xx_cpu_suspend)
 #endif
 	stmfd	sp!, {r2 - r12, lr}	@ save registers on stack
 	mov	r1, r0
-	adr	r3, BSYM(pxa3xx_finish_suspend)
+	ldr	r3, =pxa_cpu_resume	@ resume function
 	bl	cpu_suspend
-	b	pxa_cpu_resume
 
-pxa3xx_finish_suspend:
 	mov	r0, #0x06		@ S2D3C4 mode
 	mcr	p14, 0, r0, c7, c0, 0	@ enter sleep
 
@@ -62,11 +60,9 @@ ENTRY(pxa27x_cpu_suspend)
 #endif
 	stmfd	sp!, {r2 - r12, lr}		@ save registers on stack
 	mov	r4, r0				@ save sleep mode
-	adr	r3, BSYM(pxa27x_finish_suspend)
+	ldr	r3, =pxa_cpu_resume		@ resume function
 	bl	cpu_suspend
-	b	pxa_cpu_resume
 
-pxa27x_finish_suspend:
 	@ Put the processor to sleep
 	@ (also workaround for sighting 28071)
 
@@ -114,11 +110,8 @@ pxa27x_finish_suspend:
 ENTRY(pxa25x_cpu_suspend)
 	stmfd	sp!, {r2 - r12, lr}		@ save registers on stack
 	mov	r4, r0				@ save sleep mode
-	adr	r3, BSYM(pxa25x_finish_suspend)
+	ldr	r3, =pxa_cpu_resume		@ resume function
 	bl	cpu_suspend
-	b	pxa_cpu_resume
-
-pxa25x_finish_suspend:
 	@ prepare value for sleep mode
 	mov	r1, r4				@ sleep mode
 
