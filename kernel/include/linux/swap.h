@@ -309,7 +309,7 @@ static inline int mem_cgroup_swappiness(struct mem_cgroup *mem)
 /* linux/mm/page_io.c */
 extern int swap_readpage(struct page *);
 extern int swap_writepage(struct page *page, struct writeback_control *wbc);
-#ifdef CONFIG_ZSWAP
+#ifdef CONFIG_FRONTSWAP
 extern void end_swap_bio_write(struct bio *bio, int err);
 extern int __swap_writepage(struct page *page, struct writeback_control *wbc,
 	void (*end_write_func)(struct bio *, int));
@@ -322,7 +322,7 @@ extern struct address_space swapper_space;
 extern void show_swap_cache_info(void);
 extern int add_to_swap(struct page *);
 extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
-#ifdef CONFIG_ZSWAP
+#ifdef CONFIG_FRONTSWAP
 extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
 #endif
 extern void __delete_from_swap_cache(struct page *);
