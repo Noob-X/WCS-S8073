@@ -792,4 +792,3 @@ void on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,void *inf
         put_cpu();
 }
 EXPORT_SYMBOL(on_each_cpu_mask);
-
