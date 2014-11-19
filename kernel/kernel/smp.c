@@ -781,14 +781,14 @@ EXPORT_SYMBOL(on_each_cpu);
  */
 void on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,void *info, bool wait)
 {
-        int cpu = get_cpu();
+		int cpu = get_cpu();
 
-        smp_call_function_many(mask, func, info, wait);
-        if (cpumask_test_cpu(cpu, mask)) {
-                local_irq_disable();
-                func(info);
-                local_irq_enable();
-        }
-        put_cpu();
+		smp_call_function_many(mask, func, info, wait);
+		if (cpumask_test_cpu(cpu, mask)) {
+				local_irq_disable();
+				func(info);
+				local_irq_enable();
+		}
+		put_cpu();
 }
 EXPORT_SYMBOL(on_each_cpu_mask);
