@@ -157,7 +157,7 @@ static int __init zswap_comp_init(void)
 	return 0;
 }
 
-static void zswap_comp_exit(void)
+static void __init zswap_comp_exit(void)
 {
 	/* free percpu transforms */
 	if (zswap_comp_pcpu_tfms)
@@ -220,7 +220,7 @@ static struct zswap_tree *zswap_trees[MAX_SWAPFILES];
 #define ZSWAP_KMEM_CACHE_NAME "zswap_entry_cache"
 static struct kmem_cache *zswap_entry_cache;
 
-static inline int zswap_entry_cache_create(void)
+static int __init zswap_entry_cache_create(void)
 {
 	zswap_entry_cache =
 		kmem_cache_create(ZSWAP_KMEM_CACHE_NAME,
@@ -364,7 +364,7 @@ static struct notifier_block zswap_cpu_notifier_block = {
 	.notifier_call = zswap_cpu_notifier
 };
 
-static int zswap_cpu_init(void)
+static int __init zswap_cpu_init(void)
 {
 	unsigned long cpu;
 
