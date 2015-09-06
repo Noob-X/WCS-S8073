@@ -40,6 +40,11 @@ static int dram_clk;
 static spinlock_t lock;
 extern void mt6577_uart_update_sysclk(void);
 
+#ifdef CONFIG_CACHE_L2X0
+// For avoiding imprecise external abort [L2 Slave Error]
+// In order to use l2x0_lock, the lock must be exported from arch/arm/mm/cache-l2x0.c
+extern raw_spinlock_t l2x0_lock;
+#endif
 /*
  * get_ddr_type: check ddr type.
  * Return 2 for LPDDR2, 1 for LPDDR.
@@ -57,7 +62,7 @@ static int get_ddr_type(void)
 static int lpddr_overclock(int clk)
 {
     char str[KSYM_SYMBOL_LEN];
-    unsigned long size;
+    unsigned long size = 0;
     unsigned long flags;
     unsigned int addr, end, data;
     register int delay, reg_pll_con0;
@@ -134,13 +139,17 @@ static int lpddr_overclock(int clk)
     for (; addr < end; addr += 4) {
         data = *(volatile unsigned int *)addr;
     }
-
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x0000FFFF;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x0000FFFF;
+    
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock);
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x0000FFFF;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x0000FFFF;
 
     dsb();
     *(volatile unsigned int*)(PL310_BASE + L2X0_CACHE_SYNC) = 0;
-
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
 #if 0   /* there is no need to disable EMI and DRAMC */
     /* disable EMI */
     *(volatile unsigned int *)(EMI_BASE + 0x0060) &= ~0x00000400;
@@ -237,9 +246,13 @@ static int lpddr_overclock(int clk)
     *(volatile unsigned int *)(EMI_BASE + 0x0060) |= 0x00000400;
 #endif
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x00000000;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x00000000;
-
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock);
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x00000000;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x00000000;
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     spin_unlock_irqrestore(&lock, flags);
 
     mt6577_uart_update_sysclk();
@@ -255,7 +268,7 @@ static int lpddr_overclock(int clk)
 static int lpddr2_overclock(int clk)
 {
     char str[KSYM_SYMBOL_LEN];
-    unsigned long size;
+    unsigned long size = 0;
     unsigned long flags;
     unsigned int addr, end, data;
     register int delay, reg_pll_con0;
@@ -320,12 +333,16 @@ static int lpddr2_overclock(int clk)
         data = *(volatile unsigned int *)addr;
     }
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x0000FFFF;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x0000FFFF;
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock);
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x0000FFFF;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x0000FFFF;
 
     dsb();
     *(volatile unsigned int*)(PL310_BASE + L2X0_CACHE_SYNC) = 0;
-
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     /* enter DRAM self-refresh */
     *(volatile unsigned int *)(DRAM_CTR_BASE + 0x0004) |= 0x04000000;
 
@@ -396,9 +413,13 @@ static int lpddr2_overclock(int clk)
     /* exit DRAM self-refresh */
     *(volatile unsigned int *)(DRAM_CTR_BASE + 0x0004) &= ~0x04000000;
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x00000000;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x00000000;
-
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock);
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x00000000;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x00000000;
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     spin_unlock_irqrestore(&lock, flags);
 
     mt6577_uart_update_sysclk();

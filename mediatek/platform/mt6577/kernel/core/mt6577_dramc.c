@@ -18,6 +18,12 @@ extern void mt6577_uart_update_sysclk(void);
 #define DRAMC_GDDR3CTL1    (DRAM_CTR_BASE + 0x00F4)
 #define REG_DRAMC_PD_CTRL  *((volatile unsigned int*)DRAMC_PD_CTRL)
 
+#ifdef CONFIG_CACHE_L2X0
+// For avoiding imprecise external abort [L2 Slave Error]
+// In order to use l2x0_lock, the lock must be exported from arch/arm/mm/cache-l2x0.c
+extern raw_spinlock_t l2x0_lock;
+#endif
+
 static spinlock_t dram_lock;
 static unsigned int default_free_run_clock;
 static unsigned int default_dram_clock;
@@ -31,7 +37,7 @@ static int get_ddr_type (void)
 static int lpddr_downgrade_clock(EN_DRAM_CLOCK clk)
 {
     char str[KSYM_SYMBOL_LEN];
-    unsigned long size;
+    unsigned long size = 0;
     unsigned long flags;
     unsigned int addr, end, data;
     register int delay, reg_pll_con0;
@@ -109,12 +115,16 @@ static int lpddr_downgrade_clock(EN_DRAM_CLOCK clk)
         data = *(volatile unsigned int *)addr;
     }
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x0000FFFF;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x0000FFFF;
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock); 
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x0000FFFF;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x0000FFFF;
 
     dsb();
     *(volatile unsigned int*)(PL310_BASE + L2X0_CACHE_SYNC) = 0;
-
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     /* enter DRAM self-refresh */
     *(volatile unsigned int *)(DRAM_CTR_BASE + 0x0004) |= 0x04000000;
 
@@ -171,9 +181,15 @@ static int lpddr_downgrade_clock(EN_DRAM_CLOCK clk)
     /* exit DRAM self-refresh */
     *(volatile unsigned int *)(DRAM_CTR_BASE + 0x0004) &= ~0x04000000;
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x00000000;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x00000000;
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock); 
 
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x00000000;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x00000000;
+
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     /* enable L1 I cache */
     asm volatile (
         "mrc p15, 0, %0, c1, c0, 0\n\t"
@@ -192,7 +208,7 @@ static int lpddr_downgrade_clock(EN_DRAM_CLOCK clk)
 static int lpddr2_downgrade_clock(EN_DRAM_CLOCK clk)
 {
     char str[KSYM_SYMBOL_LEN];
-    unsigned long size;
+    unsigned long size = 0;
     unsigned long flags;
     unsigned int addr, end, data;
     register int delay, reg_pll_con0;
@@ -281,12 +297,18 @@ static int lpddr2_downgrade_clock(EN_DRAM_CLOCK clk)
         data = *(volatile unsigned int *)addr;
     }
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x0000FFFF;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x0000FFFF;
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock); 
+
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x0000FFFF;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x0000FFFF;
 
     dsb();
     *(volatile unsigned int*)(PL310_BASE + L2X0_CACHE_SYNC) = 0;
 
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     /* enter DRAM self-refresh */
     *(volatile unsigned int *)(DRAM_CTR_BASE + 0x0004) |= 0x04000000;
 
@@ -336,9 +358,15 @@ static int lpddr2_downgrade_clock(EN_DRAM_CLOCK clk)
     /* exit DRAM self-refresh */
     *(volatile unsigned int *)(DRAM_CTR_BASE + 0x0004) &= ~0x04000000;
 
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D) = 0x00000000;
-    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I) = 0x00000000;
+#ifdef CONFIG_CACHE_L2X0
+    raw_spin_lock(&l2x0_lock); 
 
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_D_BASE) = 0x00000000;
+    *(volatile unsigned int *)(PL310_BASE + L2X0_LOCKDOWN_WAY_I_BASE) = 0x00000000;
+
+    raw_spin_unlock(&l2x0_lock); 
+#endif
+	
     /* enable L1 I cache */
     asm volatile (
         "mrc p15, 0, %0, c1, c0, 0\n\t"
