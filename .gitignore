@@ -38,7 +38,6 @@ modules.builtin
 kernel/.tmp_versions
 kernel/.config
 kernel/.config.old
-mediatek/custom/out
 *.tmp
 *.mod
 *.cmd
