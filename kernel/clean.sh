@@ -1,0 +1,1 @@
+TARGET_PRODUCT=s8073 MTK_ROOT_CUSTOM=../mediatek/custom make clean

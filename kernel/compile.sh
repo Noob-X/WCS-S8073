@@ -1,0 +1,1 @@
+TARGET_PRODUCT=s8073 TARGET_BUILD_VARIANT=user MTK_ROOT_CUSTOM=../mediatek/custom make -j6
