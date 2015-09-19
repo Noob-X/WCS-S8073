@@ -370,7 +370,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common -mcpu=cortex-a9 \
 		   -Werror-implicit-function-declaration -mtune=cortex-a9 \
 		   -Wno-format-security -ftree-vectorize -mfpu=neon -march=armv7-a \
-		   -fno-delete-null-pointer-checks -mfloat-abi=softfp -mno-unaligned-access
+		   -fno-delete-null-pointer-checks -mfloat-abi=softfp
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
