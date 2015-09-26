@@ -1703,11 +1703,11 @@ INT16 BattVoltToTemp(UINT32 dwVolt)
 
     /* convert register to temperature */
     sBaTTMP = BattThermistorConverTemp(TRes);
-//Ivan added for debug
+/* Ivan added for debug
     printk("BattVoltToTemp() : dwVolt = %d\n", dwVolt);
     printk("BattVoltToTemp() : TRes = %d\n", TRes);
     printk("BattVoltToTemp() : sBaTTMP = %d\n", sBaTTMP);    
-    
+*/    
     #if 0
     xlog_printk(ANDROID_LOG_DEBUG, "Power/Battery", "BattVoltToTemp() : TBAT_OVER_CRITICAL_LOW = %d\n", TBAT_OVER_CRITICAL_LOW);	
 	xlog_printk(ANDROID_LOG_DEBUG, "Power/Battery", "BattVoltToTemp() : RBAT_PULL_UP_VOLT = %d\n", RBAT_PULL_UP_VOLT);
