@@ -803,8 +803,7 @@ static int page_referenced_file(struct page *page,
 	 * so we can safely take mapping->i_mmap_mutex.
 	 */
 	BUG_ON(!PageLocked(page));
-	//mutex_lock(&mapping->i_mmap_mutex);
-	spin_lock(&mapping->i_mmap_lock);
+	mutex_lock(&mapping->i_mmap_mutex);
 	/*
 	 * i_mmap_mutex does not stabilize mapcount at all, but mapcount
 	 * is more likely to be accurate if we note it after spinning.
@@ -827,8 +826,8 @@ static int page_referenced_file(struct page *page,
 		if (!mapcount)
 			break;
 	}
-	//mutex_unlock(&mapping->i_mmap_mutex);
-	spin_unlock(&mapping->i_mmap_lock);
+
+	mutex_unlock(&mapping->i_mmap_mutex);
 	return referenced;
 }
 
@@ -914,9 +913,8 @@ static int page_mkclean_file(struct address_space *mapping, struct page *page)
 	int ret = 0;
 
 	BUG_ON(PageAnon(page));
-	//mutex_lock(&mapping->i_mmap_mutex);
-	spin_lock(&mapping->i_mmap_lock);
 
+	mutex_lock(&mapping->i_mmap_mutex);
 	vma_prio_tree_foreach(vma, &iter, &mapping->i_mmap, pgoff, pgoff) {
 		if (vma->vm_flags & VM_SHARED) {
 			unsigned long address = vma_address(page, vma);
@@ -925,8 +923,7 @@ static int page_mkclean_file(struct address_space *mapping, struct page *page)
 			ret += page_mkclean_one(page, vma, address);
 		}
 	}
-	//mutex_unlock(&mapping->i_mmap_mutex);
-	spin_unlock(&mapping->i_mmap_lock);
+	mutex_unlock(&mapping->i_mmap_mutex);
 	return ret;
 }
 
@@ -1530,8 +1527,8 @@ static int try_to_unmap_file(struct page *page, enum ttu_flags flags)
 	unsigned long max_nl_cursor = 0;
 	unsigned long max_nl_size = 0;
 	unsigned int mapcount;
-	//mutex_lock(&mapping->i_mmap_mutex);
-	spin_lock(&mapping->i_mmap_lock);
+
+	mutex_lock(&mapping->i_mmap_mutex);
 	vma_prio_tree_foreach(vma, &iter, &mapping->i_mmap, pgoff, pgoff) {
 		unsigned long address = vma_address(page, vma);
 		if (address == -EFAULT)
@@ -1577,8 +1574,7 @@ static int try_to_unmap_file(struct page *page, enum ttu_flags flags)
 	mapcount = page_mapcount(page);
 	if (!mapcount)
 		goto out;
-	//cond_resched();
-	cond_resched_lock(&mapping->i_mmap_lock);
+	cond_resched();
 
 	max_nl_size = (max_nl_size + CLUSTER_SIZE - 1) & CLUSTER_MASK;
 	if (max_nl_cursor == 0)
@@ -1600,8 +1596,7 @@ static int try_to_unmap_file(struct page *page, enum ttu_flags flags)
 			}
 			vma->vm_private_data = (void *) max_nl_cursor;
 		}
-		//cond_resched();
-		cond_resched_lock(&mapping->i_mmap_lock);
+		cond_resched();
 		max_nl_cursor += CLUSTER_SIZE;
 	} while (max_nl_cursor <= max_nl_size);
 
@@ -1613,8 +1608,7 @@ static int try_to_unmap_file(struct page *page, enum ttu_flags flags)
 	list_for_each_entry(vma, &mapping->i_mmap_nonlinear, shared.vm_set.list)
 		vma->vm_private_data = NULL;
 out:
-	//mutex_unlock(&mapping->i_mmap_mutex);
-	spin_unlock(&mapping->i_mmap_lock);
+	mutex_unlock(&mapping->i_mmap_mutex);
 	return ret;
 }
 
@@ -1733,9 +1727,7 @@ static int rmap_walk_file(struct page *page, int (*rmap_one)(struct page *,
 
 	if (!mapping)
 		return ret;
-	spin_lock(&mapping->i_mmap_lock);
-	//mutex_lock(&mapping->i_mmap_mutex);
-
+	mutex_lock(&mapping->i_mmap_mutex);
 	vma_prio_tree_foreach(vma, &iter, &mapping->i_mmap, pgoff, pgoff) {
 		unsigned long address = vma_address(page, vma);
 		if (address == -EFAULT)
@@ -1749,8 +1741,7 @@ static int rmap_walk_file(struct page *page, int (*rmap_one)(struct page *,
 	 * never contain migration ptes.  Decide what to do about this
 	 * limitation to linear when we need rmap_walk() on nonlinear.
 	 */
-	//mutex_unlock(&mapping->i_mmap_mutex);
-	spin_unlock(&mapping->i_mmap_lock);
+	mutex_unlock(&mapping->i_mmap_mutex);
 	return ret;
 }
 
