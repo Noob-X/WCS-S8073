@@ -34,6 +34,7 @@
 #include <linux/io.h>
 #include <linux/irq.h>
 #include <linux/smp.h>
+#include <asm/exception.h>
 #include <asm/hardware/gic.h>
 #include <asm/smp_twd.h>
 #include <wd_kicker.h>
