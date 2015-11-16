@@ -661,21 +661,24 @@ static int adb_function_set_alt(struct usb_function *f,
 	struct usb_composite_dev *cdev = f->config->cdev;
 	int ret;
 
-	DBG(cdev, "%s %s %d: intf: %d alt: %d\n", __FILE__, __func__, __LINE__, intf, alt);
-	ret = usb_ep_enable(dev->ep_in,
-			ep_choose(cdev->gadget,
-				&adb_highspeed_in_desc,
-				&adb_fullspeed_in_desc));
+	DBG(cdev, "adb_function_set_alt intf: %d alt: %d\n", intf, alt);
+
+	ret = config_ep_by_speed(cdev->gadget, f, dev->ep_in);
+	if (ret)
+		return ret;
+
+	ret = usb_ep_enable(dev->ep_in);
+	if (ret)
+		return ret;
+
+	ret = config_ep_by_speed(cdev->gadget, f, dev->ep_out);
 	if (ret)
 	{
 		xlog_printk(ANDROID_LOG_ERROR, XLOG_TAG, "%s %s %d: usb_ep_enable in failed\n", __FILE__, __func__, __LINE__);
 		return ret;
 	}
 
-	ret = usb_ep_enable(dev->ep_out,
-			ep_choose(cdev->gadget,
-				&adb_highspeed_out_desc,
-				&adb_fullspeed_out_desc));
+	ret = usb_ep_enable(dev->ep_out);
 	if (ret) {
 		usb_ep_disable(dev->ep_in);
 		xlog_printk(ANDROID_LOG_ERROR, XLOG_TAG, "%s %s %d: usb_ep_enable out failed\n", __FILE__, __func__, __LINE__);
