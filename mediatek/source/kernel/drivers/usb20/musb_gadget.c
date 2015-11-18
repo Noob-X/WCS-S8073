@@ -2690,7 +2690,7 @@ void musb_g_disconnect(struct musb *musb)
 	wake_unlock(&musb->usb_lock);
 }
 
-void musb_gadget_stop(struct musb *musb)
+void mt_musb_gadget_stop(struct musb *musb)
 {
 	int i = 0;
 	struct usb_ep* ep = NULL;
@@ -2760,7 +2760,7 @@ __acquires(musb->lock)
 	musb->g.a_hnp_support = 0;
 
 	spin_unlock(&musb->lock);
-	musb_gadget_stop(musb);
+	mt_musb_gadget_stop(musb);
 
 	musb->g.ep0->ops->fifo_flush(musb->g.ep0);
 	spin_lock(&musb->lock);

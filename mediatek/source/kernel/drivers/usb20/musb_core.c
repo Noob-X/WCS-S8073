@@ -624,7 +624,7 @@ void musb_start(struct musb *musb)
 /*Gadget stop :flush all ep fifo and disable fifo*/
 //extern struct musb_hw_ep	*ep_in_list[MUSB_C_NUM_EPS];
 //extern struct musb_hw_ep	*ep_out_list[MUSB_C_NUM_EPS];
-extern void musb_gadget_stop(struct musb *musb);
+extern void mt_musb_gadget_stop(struct musb *musb);
 void gadget_stop(struct musb *musb)
 {
 	u8 power;
@@ -639,7 +639,7 @@ void gadget_stop(struct musb *musb)
 		musb->gadget_driver->disconnect(&musb->g);
 	}
 
-	musb_gadget_stop(musb);
+	mt_musb_gadget_stop(musb);
 	musb->g.speed = USB_SPEED_UNKNOWN;
 
 	/*
