@@ -9,7 +9,7 @@
 #include <mach/irqs.h>
 
 extern struct sys_timer mt6577_timer;
-extern void mt6577_fixup(struct machine_desc *desc, struct tag *tags, char **cmdline, struct meminfo *mi);
+extern void mt6577_fixup(struct tag *tags, char **cmdline, struct meminfo *mi);
 extern void mt6577_power_off(void);
 
 void __init mt6577_init(void)

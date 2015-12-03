@@ -1058,7 +1058,7 @@ static int __init parse_tag_videofb_fixup(const struct tag *tags)
         use_bl_fb++;
 	return 0;
 }
-void mt6577_fixup(struct machine_desc *desc, struct tag *tags, char **cmdline, struct meminfo *mi)
+void mt6577_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 {
 #ifndef CONFIG_MT6577_FPGA
     struct tag *cmdline_tag = NULL;
