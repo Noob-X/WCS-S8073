@@ -108,7 +108,7 @@ void __init mt6577_map_io(void)
 }
 
 MACHINE_START(MT6577, "MT6577")
-    .atag_offset    = PHYS_OFFSET + 0x00000100,
+    .atag_offset    = 0x100,
     .map_io         = mt6577_map_io,
     .init_irq       = mt_init_irq,
     .timer          = &mt6577_timer,
