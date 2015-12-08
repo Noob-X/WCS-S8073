@@ -223,9 +223,9 @@ static inline int notifier_to_errno(int ret)
 /* 
  * <20120604> marc.huang 
  * define MTK_CPU_HOTPLUG_DEBUG for cpu notify callback log 
- */
+ *
 #define MTK_CPU_HOTPLUG_DEBUG
-
+*/
 #define CPU_ONLINE		0x0002 /* CPU (unsigned)v is up */
 #define CPU_UP_PREPARE		0x0003 /* CPU (unsigned)v coming up */
 #define CPU_UP_CANCELED		0x0004 /* CPU (unsigned)v NOT coming up */
