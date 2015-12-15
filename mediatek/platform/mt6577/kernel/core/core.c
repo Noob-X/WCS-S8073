@@ -61,7 +61,7 @@ static struct map_desc mt6577_io_desc[] __initdata =
     {
         .virtual = MMSYS1_CONFIG_BASE,
         .pfn = __phys_to_pfn(IO_VIRT_TO_PHYS(MMSYS1_CONFIG_BASE)),
-        .length = SZ_16M,
+        .length = SZ_512K,
         .type = MT_DEVICE
     },
     {
