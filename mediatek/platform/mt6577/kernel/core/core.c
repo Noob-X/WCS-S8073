@@ -18,22 +18,23 @@ void __init mt6577_init(void)
     pm_power_off = mt6577_power_off;
 
 #if defined(CONFIG_CACHE_L2X0)
+#ifdef CONFIG_ARCH_MT6577
     writel(L2X0_DYNAMIC_CLK_GATING_EN, PL310_BASE + L2X0_POWER_CTRL);
     writel(readl(PL310_BASE + L2X0_PREFETCH_CTRL) | 0x40000000, PL310_BASE + L2X0_PREFETCH_CTRL);
 
     /*L2C data ram access latency*/
     tmp = readl(PL310_BASE + L2X0_DATA_LATENCY_CTRL);
     tmp &= ~((0x7 << 4) | 0x7); // clear bit[6:4] and bit[2:0]
-    tmp |= (0x2 << 4); //3T read access latency
-
-    if((*(volatile unsigned int *)(EFUSE_CTR_BASE + 0x100)) & (1 << 18))
-        tmp |= 0x1; // 2T setup latency
-    else 
-        tmp |= 0x0; // 1T setup latency
+    tmp |= ((0x2 << 4) | 0x1); //3T read access latency & 2T setup latency
 
     writel(tmp, PL310_BASE + L2X0_DATA_LATENCY_CTRL);
  
     l2x0_init((void __iomem *)PL310_BASE, 0x70400000, 0x8FBFFFFF);
+#else
+    writel(L2X0_DYNAMIC_CLK_GATING_EN, PL310_BASE + L2X0_POWER_CTRL);
+    writel(readl(PL310_BASE + L2X0_PREFETCH_CTRL) | 0x40000000, PL310_BASE + L2X0_PREFETCH_CTRL);
+    l2x0_init((void __iomem *)PL310_BASE, 0x70000000, 0x8FFFFFFF);
+#endif
 #endif  /* CONFIG_CACHE_L2X0 */
 
 #if defined(CONFIG_HAVE_ARM_SCU)
