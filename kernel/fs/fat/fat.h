@@ -81,7 +81,7 @@ struct msdos_sb_info {
 	unsigned long vol_id;        /* volume ID */
 
 	int fatent_shift;
-	struct fatent_operations *fatent_ops;
+	const struct fatent_operations *fatent_ops;
 	struct inode *fat_inode;
 
 	struct ratelimit_state ratelimit;
