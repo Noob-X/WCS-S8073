@@ -178,4 +178,7 @@ config HAVE_ARCH_MUTEX_CPU_RELAX
 config HAVE_RCU_TABLE_FREE
 	bool
 
+config CPU_NO_EFFICIENT_FFS
+	def_bool n
+
 source "kernel/gcov/Kconfig"

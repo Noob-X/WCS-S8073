@@ -436,18 +436,21 @@ config CPU_32v3
 	select TLS_REG_EMUL if SMP || !MMU
 	select NEEDS_SYSCALL_FOR_CMPXCHG if SMP
 	select CPU_USE_DOMAINS if MMU
+	select CPU_NO_EFFICIENT_FFS
 
 config CPU_32v4
 	bool
 	select TLS_REG_EMUL if SMP || !MMU
 	select NEEDS_SYSCALL_FOR_CMPXCHG if SMP
 	select CPU_USE_DOMAINS if MMU
+	select CPU_NO_EFFICIENT_FFS
 
 config CPU_32v4T
 	bool
 	select TLS_REG_EMUL if SMP || !MMU
 	select NEEDS_SYSCALL_FOR_CMPXCHG if SMP
 	select CPU_USE_DOMAINS if MMU
+	select CPU_NO_EFFICIENT_FFS
 
 config CPU_32v5
 	bool
