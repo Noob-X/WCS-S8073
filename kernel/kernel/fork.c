@@ -277,29 +277,25 @@ static struct task_struct *dup_task_struct(struct task_struct *orig)
 	prepare_to_copy(orig);
 
 	tsk = alloc_task_struct_node(node);
-    if (!tsk){
-        printk("[%d:%s] fork fail at alloc_tsk_node, please check kmem_cache_alloc_node()\n", current->pid, current->comm);
-        return NULL;
-    }
-    ti = alloc_thread_info_node(tsk, node);
-    if (!ti) {
-        printk("[%d:%s] fork fail at alloc_t_info_node, please check alloc_pages_node()\n", current->pid, current->comm);
-        free_task_struct(tsk);
-        return NULL;
-    }
+	if (!tsk)
+		return NULL;
+
+	ti = alloc_thread_info_node(tsk, node);
+	if (!ti) {
+		free_task_struct(tsk);
+		return NULL;
+	}
 
  	err = arch_dup_task_struct(tsk, orig);
-    if (err){
-        printk("[%d:%s] fork fail at arch_dup_task_struct, err:%d \n", current->pid, current->comm, err);
-        goto out;
-    }
-    tsk->stack = ti;
+	if (err)
+		goto out;
+
+	tsk->stack = ti;
 
 	err = prop_local_init_single(&tsk->dirties);
-    if (err){
-        printk("[%d:%s] fork fail at prop_local_init_single, err:%d\n", current->pid, current->comm, err);
-        goto out;
-    }
+	if (err)
+		goto out;
+
 	setup_thread_stack(tsk, orig);
 	clear_user_return_notifier(tsk);
 	clear_tsk_need_resched(tsk);
