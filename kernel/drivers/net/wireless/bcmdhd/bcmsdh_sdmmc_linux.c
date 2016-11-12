@@ -203,8 +203,7 @@ static int bcmsdh_sdmmc_resume(struct device *pdev)
 {
 	struct sdio_func *func = dev_to_sdio_func(pdev);
 
-//	sd_trace(("%s Enter\n", __FUNCTION__));
-	printk(("%s Enter\n", __FUNCTION__));		//Ivan
+	sd_trace(("%s Enter\n", __FUNCTION__));
 	dhd_mmc_suspend = FALSE;
 #if defined(OOB_INTR_ONLY)
 	if ((func->num == 2) && dhd_os_check_if_up(bcmsdh_get_drvdata()))
