@@ -3760,7 +3760,7 @@ dhd_module_init(void)
 	if (!error)
 		printf("\n==========%s\n", dhd_version);
 	else {
-		printf(("%s: sdio_register_driver failed\n", __FUNCTION__));
+		printf("%s: sdio_register_driver failed\n", __FUNCTION__);
 		goto fail_1;
 	}
 
