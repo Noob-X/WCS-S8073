@@ -369,7 +369,7 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common -mcpu=cortex-a9 \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security -ftree-vectorize -mfpu=neon-fp16 \
+		   -Wno-format-security -ftree-vectorize -mfpu=neon \
 		   -fno-delete-null-pointer-checks -mfloat-abi=softfp
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
