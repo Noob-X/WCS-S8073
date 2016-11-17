@@ -374,13 +374,6 @@ int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
 	struct address_space *mapping = file->f_mapping;
 	int err, ret;
 
-#ifdef FEATURE_PRINT_FSYNC_PID
-	pid_t curr_pid;
-	unsigned int i;
-	unsigned long long time1=0;
-	bool ptr_flag=false;
-#endif	
-
 	if (!file->f_op || !file->f_op->fsync) {
 		ret = -EINVAL;
 		goto out;
@@ -393,77 +386,6 @@ int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
 	 * livelocks in fsync_buffers_list().
 	 */
 	mutex_lock(&mapping->host->i_mutex);
-
-#ifdef FEATURE_PRINT_FSYNC_PID
-	time1 = sched_clock();
-	mutex_lock(&fsync_mutex);
-	if(fsync_last_t == 0)
-	{
-			fsync_last_t = time1;
-	}
-	if (time1 - fsync_last_t >= (unsigned long long)SYNC_PRT_TIME_PERIOD)
-	{
-		sprintf(xlog_buf, "Fsync [(PID):cnt] -- ");		
-		for(i=0;i<ID_CNT;i++)
-		{
-			if(fsync[i].pid==0)
-				break;
-			else
-			{
-				sprintf(xlog_buf+21+i*9, "(%4d):%d ", fsync[i].pid, fsync[i].cnt);	//21=strlen("Fsync [(PID):cnt] -- "), 9=strlen("(%4d):%d ")
-				ptr_flag = true;
-			}
-		}	
-		if(ptr_flag)
-		{		
-			xlog_printk(ANDROID_LOG_DEBUG, "BLOCK_TAG", "Fsync statistic in timeline %lld\n", fsync_last_t); 
-			xlog_printk(ANDROID_LOG_DEBUG, "BLOCK_TAG", "%s", xlog_buf);			
-		}		
-		for (i=0;i<ID_CNT;i++)	//clear
-		{
-			fsync[i].pid=0;
-			fsync[i].cnt=0;
-		}
-		fsync_last_t = time1;
-	}
-	curr_pid = task_pid_nr(current);	
-	do{
-
-		if(fsync[0].pid ==0)
-		{
-			fsync[0].pid= curr_pid;
-			fsync[0].cnt ++;
-			break;		
-		}
-		if(curr_pid == fsync[f_idx].pid)
-		{
-			fsync[f_idx].cnt++;
-			break;
-		}
-		for(i=0;i<ID_CNT;i++)
-		{
-			if (curr_pid == fsync[i].pid) 	//found in the array
-			{
-				fsync[i].cnt++;
-				f_idx =i;
-				break;
-			}
-			else if (fsync[i+1].pid== 0)	//find the empty space
-			{
-				if(i+1==ID_CNT)	//check buf full, record in the last element
-				{
-					i -= 1;
-					fsync[i+1].cnt =0;	
-				}
-				fsync[i+1].pid = curr_pid;
-				fsync[i+1].cnt++;
-				f_idx=i+1; 
-				break;
-			}
-		}		
-	}while(0);
-	mutex_unlock(&fsync_mutex);
-#endif	
 	err = file->f_op->fsync(file, datasync);
 	if (!ret)
 		ret = err;
