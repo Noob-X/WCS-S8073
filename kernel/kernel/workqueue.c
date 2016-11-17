@@ -1868,14 +1868,7 @@ __acquires(&gcwq->lock)
 	lock_map_acquire_read(&cwq->wq->lockdep_map);
 	lock_map_acquire(&lockdep_map);
 	trace_workqueue_execute_start(work);
-	t1 = sched_clock();
 	f(work);
-	t2 = sched_clock();
-	
-	//if work execution duration  > 15 ms
-	if(t2 - t1 >= WQ_WORK_LIMIT_NS){
-	    printk(KERN_DEBUG "WQ_WARN: cpu:%d, proc:%s, [%pS]dur: %llu > %dms\n", gcwq->cpu, current->comm, (void *)f,(unsigned long long)t2-t1, WQ_WORK_LIMIT_MS);
-	};
 	/*
 	 * While we must be careful to not use "work" after this, the trace
 	 * point will only record its address.

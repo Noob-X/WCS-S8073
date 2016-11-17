@@ -12,8 +12,6 @@
 #include <linux/threads.h>
 #include <asm/atomic.h>
 
-#define WQ_WORK_LIMIT_NS (15000000)
-#define WQ_WORK_LIMIT_MS (15)
 struct workqueue_struct;
 
 struct work_struct;
