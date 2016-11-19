@@ -44,12 +44,12 @@ static char g_bind9[20]={0};
 extern int MA_len;
 //static int battery_write_flag=0;
 
-#define mtktsbattery_TEMP_CRIT 75000 /* 60.000 degree Celsius */
+#define mtktsbattery_TEMP_CRIT 60000 /* 60.000 degree Celsius */
 
 //Ivan    if (mtktsbattery_debug_log) {                
 #define mtktsbattery_dprintk(fmt, args...)   \
 do {                                    \
-    if (1) {                \
+    if (mtktsbattery_debug_log) {                \
         xlog_printk(ANDROID_LOG_INFO, "Power/Battery_Thermal", fmt, ##args); \
     }                                   \
 } while(0)
@@ -168,9 +168,9 @@ static int mtktsbattery_get_temp(struct thermal_zone_device *thermal,
 {
 //Ivan added    
 //    *t = mtktsbattery_get_hw_temp();
-    if (mtktsbattery_get_hw_temp() > 50000)
-	*t = 50000;
-    else
+//    if (mtktsbattery_get_hw_temp() > 50000)
+//	*t = 50000;
+//    else
 	*t = mtktsbattery_get_hw_temp();
     
 		return 0;
