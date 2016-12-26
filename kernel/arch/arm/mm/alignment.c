@@ -785,7 +785,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 	} else
 /*		fault = __get_user(instr, (u32 *)instrptr);
 	set_fs(fs); */
-		fault = probe_kernel_address(instrptr, instr);	
+		fault = probe_kernel_address(instrptr, instr);
 
 	if (fault) {
 		type = TYPE_FAULT;
