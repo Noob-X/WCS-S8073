@@ -141,7 +141,7 @@ NORET_TYPE void panic(const char * fmt, ...)
     
      *to prevent race condition: multicore stop each other cocurrently
      *
-    local_irq_disable();
+    local_irq_disable(); */
 	/*
 	 * Note smp_send_stop is the usual smp shutdown function, which
 	 * unfortunately means it may not be hardened to work in a panic
