@@ -50,5 +50,4 @@ static __init int board_init(void)
     return 0;
 }
 
-late_initcall(board_init);
-
+device_initcall_sync(board_init);
