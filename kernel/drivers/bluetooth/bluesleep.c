@@ -40,11 +40,11 @@
 #include <linux/version.h>
 #include <linux/workqueue.h>
 #include <linux/platform_device.h>
-#include <linux/serial_core.h>_
+#include <linux/serial_core.h>
 #include <linux/irq.h>
 #include <linux/param.h>
 #include <linux/bitops.h>
-#include <linux/termios.h>_
+#include <linux/termios.h>
 #include <mach/mt6577_gpio.h>
 //#include <mach/msm_serial_hs.h>
 //#include <mach/mt6575_eint.h>
