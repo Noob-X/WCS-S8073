@@ -5142,7 +5142,7 @@ static void __exit mt_msdc_exit(void)
     platform_driver_unregister(&mt_msdc_driver);
 }
 
-module_init(mt_msdc_init);
+subsys_initcall(mt_msdc_init);
 module_exit(mt_msdc_exit);
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("MediaTek MT6577 SD/MMC Card Driver");

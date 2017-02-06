@@ -1485,7 +1485,7 @@ static int __init cpufreq_init(void)
         return 0;
     }
 }
-module_init(cpufreq_init);
+subsys_initcall(cpufreq_init);
 
 static void __exit cpufreq_exit(void)
 {

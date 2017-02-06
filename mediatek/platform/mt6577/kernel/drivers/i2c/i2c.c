@@ -1801,7 +1801,7 @@ static void __exit mt_i2c_exit(void)
     platform_driver_unregister(&mt_i2c_driver);
 }
 
-module_init(mt_i2c_init);
+subsys_initcall(mt_i2c_init);
 module_exit(mt_i2c_exit);
 
 

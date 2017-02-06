@@ -1340,6 +1340,6 @@ static void __exit pmem_exit(void)
 	platform_driver_unregister(&pmem_driver);
 }
 
-module_init(pmem_init);
+subsys_initcall(pmem_init);
 module_exit(pmem_exit);
 

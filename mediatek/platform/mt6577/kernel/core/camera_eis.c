@@ -468,7 +468,7 @@ static void __exit mt_eis_exit(void)
 /*******************************************************************************
 *
 ********************************************************************************/
-module_init(mt_eis_init);
+subsys_initcall(mt_eis_init);
 module_exit(mt_eis_exit);
 MODULE_DESCRIPTION("CAMERA EIS driver");
 MODULE_AUTHOR("ME3");

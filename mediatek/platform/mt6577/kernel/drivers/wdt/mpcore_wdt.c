@@ -647,6 +647,6 @@ static void __exit mpcore_wdt_exit(void)
 	platform_device_unregister(&mpcore_wdt_device);
 }
 
-module_init(mpcore_wdt_init);
+subsys_initcall(mpcore_wdt_init);
 module_exit(mpcore_wdt_exit);
 

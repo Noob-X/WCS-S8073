@@ -1465,7 +1465,7 @@ static void __exit hwmsen_exit(void)
 	platform_driver_unregister(&hwmsen_driver);    
 }
 /*----------------------------------------------------------------------------*/
-module_init(hwmsen_init);
+subsys_initcall(hwmsen_init);
 module_exit(hwmsen_exit);
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("sensor device driver");

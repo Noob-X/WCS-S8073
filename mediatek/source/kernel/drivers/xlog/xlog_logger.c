@@ -663,7 +663,7 @@ out:
 	return ret;
 }
 
-device_initcall(logger_init);
+fs_initcall(logger_init);
 
 static ssize_t xlog_logger_kernel_write(struct logger_log *log, const char *msg, size_t len)
 {

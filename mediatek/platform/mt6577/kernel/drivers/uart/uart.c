@@ -3775,7 +3775,7 @@ static void __exit mtk_uart_exit(void)
     uart_unregister_driver(&mtk_uart_drv);
 }
 /*---------------------------------------------------------------------------*/
-module_init(mtk_uart_init);
+subsys_initcall(mtk_uart_init);
 module_exit(mtk_uart_exit);
 /*---------------------------------------------------------------------------*/
 MODULE_AUTHOR("MTK");

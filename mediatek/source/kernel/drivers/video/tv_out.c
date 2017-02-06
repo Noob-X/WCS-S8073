@@ -2968,7 +2968,7 @@ static void __exit TVout_Drv_Exit(void)
     platform_driver_unregister(&g_stMTKTVout_Platform_Driver);
 }
 
-module_init(TVout_Drv_Init);
+subsys_initcall(TVout_Drv_Init);
 module_exit(TVout_Drv_Exit);
 
 MODULE_DESCRIPTION("MTK TV-out driver");

@@ -3888,7 +3888,7 @@ static void __exit MT6577_MDP_Exit(void)
 EXPORT_SYMBOL(b_mdp_pd_path);
 
 
-module_init(MT6577_MDP_Init);
+subsys_initcall(MT6577_MDP_Init);
 module_exit(MT6577_MDP_Exit);
 MODULE_DESCRIPTION("MT6577 MDP driver");
 MODULE_AUTHOR("Clouds Lee <clouds.lee@mediatek.com>");

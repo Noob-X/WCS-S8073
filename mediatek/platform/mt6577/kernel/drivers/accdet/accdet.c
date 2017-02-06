@@ -1832,7 +1832,7 @@ static void  accdet_mod_exit(void)
 	ACCDET_DEBUG("[Accdet]accdet_mod_exit Done!\n");
 }
 
-module_init(accdet_mod_init);
+subsys_initcall(accdet_mod_init);
 module_exit(accdet_mod_exit);
 
 

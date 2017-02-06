@@ -2003,7 +2003,7 @@ static void __exit dumchar_cleanup(void)
 }
 
 
-module_init(dumchar_init);
+subsys_initcall(dumchar_init);
 module_exit(dumchar_cleanup);
 
 

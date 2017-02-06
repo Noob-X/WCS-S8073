@@ -1341,5 +1341,5 @@ static void __exit a320_priv_exit(void)
     platform_driver_unregister(&a320_driver);
 }
 /*----------------------------------------------------------------------------*/
-module_init(a320_priv_init);
+subsys_initcall(a320_priv_init);
 module_exit(a320_priv_exit);

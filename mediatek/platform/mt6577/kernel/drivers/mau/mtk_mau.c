@@ -1619,7 +1619,7 @@ static void __exit mau_exit(void)
 #endif
 }
 
-module_init(mau_init);
+subsys_initcall(mau_init);
 module_exit(mau_exit);
 
 MODULE_DESCRIPTION("MTK MAU driver");

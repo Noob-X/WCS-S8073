@@ -2015,7 +2015,7 @@ static int __init hdmi_init(void)
 }
 
 
-module_init(hdmi_init);
+subsys_initcall(hdmi_init);
 module_exit(hdmi_exit);
 MODULE_AUTHOR("Xuecheng, Zhang <xuecheng.zhang@mediatek.com>");
 MODULE_DESCRIPTION("HDMI Driver");

@@ -1781,7 +1781,7 @@ static void __exit mt6329_exit(void)
 	i2c_del_driver(&mt6329_driver);
 }
 
-module_init(mt6329_init);
+subsys_initcall(mt6329_init);
 module_exit(mt6329_exit);
    
 MODULE_LICENSE("GPL");

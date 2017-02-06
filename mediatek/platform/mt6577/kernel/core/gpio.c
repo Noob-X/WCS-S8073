@@ -1611,7 +1611,7 @@ static void __exit mt_gpio_exit(void)
     return;
 }
 /*---------------------------------------------------------------------------*/
-module_init(mt_gpio_init);
+subsys_initcall(mt_gpio_init);
 module_exit(mt_gpio_exit);
 MODULE_AUTHOR("Ranran <ranran.lu@mediatek.com>");
 MODULE_DESCRIPTION("MT General Purpose Driver (GPIO) $Revision$");

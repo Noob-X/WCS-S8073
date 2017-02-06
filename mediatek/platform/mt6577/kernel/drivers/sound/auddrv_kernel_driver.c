@@ -5285,7 +5285,7 @@ MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION(AUDDRV_NAME);
 MODULE_AUTHOR(AUDDRV_AUTHOR);
 
-module_init(AudDrv_mod_init);
+subsys_initcall(AudDrv_mod_init);
 module_exit(AudDrv_mod_exit);
 
 

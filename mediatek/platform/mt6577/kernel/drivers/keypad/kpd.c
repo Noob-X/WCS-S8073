@@ -1020,7 +1020,7 @@ static void __exit kpd_mod_exit(void)
 {
 }
 
-module_init(kpd_mod_init);
+subsys_initcall(kpd_mod_init);
 module_exit(kpd_mod_exit);
 
 module_param(kpd_show_hw_keycode, bool, 0644);

@@ -1730,7 +1730,7 @@ static void __exit SYSRAM_Exit(void)
     platform_driver_unregister(&g_stSYSRAM_Platform_Driver);
 }
 
-module_init(SYSRAM_Init);
+subsys_initcall(SYSRAM_Init);
 module_exit(SYSRAM_Exit);
 MODULE_DESCRIPTION("Camera sysram driver");
 MODULE_AUTHOR("Marx <Marx.Chiu@Mediatek.com>");

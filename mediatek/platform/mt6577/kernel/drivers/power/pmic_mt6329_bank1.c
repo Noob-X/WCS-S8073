@@ -4877,7 +4877,7 @@ static void __exit mt6329_bank1_exit(void)
 	i2c_del_driver(&mt6329_bank1_driver);
 }
 
-module_init(mt6329_bank1_init);
+subsys_initcall(mt6329_bank1_init);
 module_exit(mt6329_bank1_exit);
    
 MODULE_LICENSE("GPL");

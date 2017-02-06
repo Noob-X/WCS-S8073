@@ -4663,7 +4663,7 @@ static void __exit mt6577_battery_exit (void)
 {
 }
 
-module_init(mt6577_battery_init);
+subsys_initcall(mt6577_battery_init);
 module_exit(mt6577_battery_exit);
 
 MODULE_AUTHOR("James Lo");

@@ -1374,7 +1374,7 @@ static void __exit mt6577_auxadc_exit (void)
 {
 }
 
-module_init(mt6577_auxadc_init);
+subsys_initcall(mt6577_auxadc_init);
 module_exit(mt6577_auxadc_exit);
 
 MODULE_AUTHOR("MTK");

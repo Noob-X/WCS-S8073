@@ -1899,7 +1899,7 @@ EXPORT_SYMBOL(kdSetSensorSyncFlag);
 EXPORT_SYMBOL(kdSensorSyncFunctionPtr); 
 EXPORT_SYMBOL(kdGetRawGainInfoPtr); 
 
-module_init(CAMERA_HW_i2C_init);
+subsys_initcall(CAMERA_HW_i2C_init);
 module_exit(CAMERA_HW_i2C_exit);
 
 MODULE_DESCRIPTION("CAMERA_HW driver");

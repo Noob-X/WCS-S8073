@@ -1066,7 +1066,7 @@ static void __exit mt3326_gps_mod_exit(void)
     platform_driver_unregister(&mt3326_gps_driver);
 }
 /*****************************************************************************/
-module_init(mt3326_gps_mod_init);
+subsys_initcall(mt3326_gps_mod_init);
 module_exit(mt3326_gps_mod_exit);
 /*****************************************************************************/
 MODULE_AUTHOR("MingHsien Hsieh <MingHsien.Hsieh@mediatek.com>");

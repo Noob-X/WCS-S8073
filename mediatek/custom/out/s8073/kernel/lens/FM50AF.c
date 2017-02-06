@@ -468,7 +468,7 @@ static void __exit FM50AF_i2C_exit(void)
 	platform_driver_unregister(&g_stFM50AF_Driver);
 }
 
-module_init(FM50AF_i2C_init);
+subsys_initcall(FM50AF_i2C_init);
 module_exit(FM50AF_i2C_exit);
 
 MODULE_DESCRIPTION("FM50AF lens module driver");

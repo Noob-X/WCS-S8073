@@ -1966,7 +1966,7 @@ void mt_isp_mclk_ctrl(MINT32 en)
 *
 ********************************************************************************/
 EXPORT_SYMBOL(mt_isp_mclk_ctrl);
-module_init(mt_isp_init);
+subsys_initcall(mt_isp_init);
 module_exit(mt_isp_exit);
 MODULE_DESCRIPTION("Camera ISP driver");
 MODULE_AUTHOR("ME3");

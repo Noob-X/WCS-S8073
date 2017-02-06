@@ -1252,7 +1252,7 @@ static int __init musbfsh_init(void)
 /* make us init after usbcore and i2c (transceivers, regulators, etc)
  * and before usb gadget and host-side drivers start to register
  */
-module_init(musbfsh_init);
+fs_initcall(musbfsh_init);
 
 static void __exit musbfsh_cleanup(void)
 {

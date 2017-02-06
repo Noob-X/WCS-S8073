@@ -681,7 +681,7 @@ static void __exit ResMgr_Exit(void)
     LOG_MSG("OK\r\n");
 }
 //----------------------------------------------------------------------------
-module_init(ResMgr_Init);
+subsys_initcall(ResMgr_Init);
 module_exit(ResMgr_Exit);
 MODULE_DESCRIPTION("Camera Resource Manager Driver");
 MODULE_AUTHOR("Marx <Marx.Chiu@Mediatek.com>");

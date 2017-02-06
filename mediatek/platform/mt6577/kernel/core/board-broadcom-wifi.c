@@ -149,4 +149,4 @@ int __init broadcom_wifi_init(void)
 	ret = platform_device_register(&brcm_wifi_device);
 	return ret;
 }
-late_initcall(broadcom_wifi_init);
+device_initcall(broadcom_wifi_init);
