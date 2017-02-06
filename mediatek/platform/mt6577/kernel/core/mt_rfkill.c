@@ -544,7 +544,6 @@ static int __init mt_rfkill_probe(struct platform_device *pdev)
 
 static struct platform_driver mt_rfkill_driver =
 {
-    .probe    = mt_rfkill_probe,
 #ifdef CONFIG_PM
     .suspend  = mt_rfkill_suspend,
     .resume   = mt_rfkill_resume,
@@ -558,14 +557,14 @@ static struct platform_driver mt_rfkill_driver =
 
 static int __init mt_rfkill_init(void)
 {
-    int iResult = 0;
+    int ret;
     printk(KERN_INFO "---->mt_rfkill_init\n");
-    iResult = platform_driver_register(&mt_rfkill_driver);
-    printk(KERN_INFO "mt_rfkill_init = [%d]\n", iResult);
-    return iResult;
+    ret = platform_driver_probe(&mt_rfkill_driver, mt_rfkill_probe);
+    printk(KERN_INFO "mt_rfkill_init = [%d]\n", ret);
+    return ret;
 }
 
-module_init(mt_rfkill_init);
+late_initcall(mt_rfkill_init);
 MODULE_DESCRIPTION("mt-rfkill");
 MODULE_AUTHOR("JinKwan <jk.huang@mediatek.com>");
 MODULE_LICENSE("GPL");
