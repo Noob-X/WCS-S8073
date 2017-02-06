@@ -1139,7 +1139,6 @@ static struct platform_driver mt65xx_leds_driver = {
 		.name	= "leds-mt65xx",
 		.owner	= THIS_MODULE,
 	},
-	.probe		= mt65xx_leds_probe,
 	.remove		= mt65xx_leds_remove,
 	//.suspend	= mt65xx_leds_suspend,
 	.shutdown   = mt65xx_leds_shutdown,
@@ -1164,7 +1163,7 @@ static int __init mt65xx_leds_init(void)
 	if (ret)
 		printk("[LED]mt65xx_leds_init:dev:E%d\n", ret);
 #endif
-	ret = platform_driver_register(&mt65xx_leds_driver);
+	ret = platform_driver_probe(&mt65xx_leds_driver, mt65xx_leds_probe);
 
 	if (ret)
 	{
@@ -1186,7 +1185,7 @@ static void __exit mt65xx_leds_exit(void)
 
 module_param(debug_enable, int,0644);
 
-module_init(mt65xx_leds_init);
+late_initcall(mt65xx_leds_init);
 module_exit(mt65xx_leds_exit);
 
 MODULE_AUTHOR("MediaTek Inc.");
