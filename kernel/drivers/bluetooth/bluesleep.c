@@ -743,7 +743,6 @@ int bluesleep_resume(struct platform_device * bt)
 }
 
 static struct platform_driver bluesleep_driver = {
-	.probe = bluesleep_probe,
 	.remove = bluesleep_remove,
 	.suspend	= bluesleep_suspend,
 	.resume		= bluesleep_resume,
@@ -764,7 +763,7 @@ static int __init bluesleep_init(void)
 
 	BT_INFO("MSM Sleep Mode Driver Ver %s", VERSION);
        // printk("************wj test 1111*************bluesleep_init \n");
-	retval = platform_driver_register(&bluesleep_driver);
+	retval = platform_driver_probe(&bluesleep_driver, bluesleep_probe);
 	if (retval)
 		return retval;
 
@@ -861,7 +860,7 @@ static void __exit bluesleep_exit(void)
 	remove_proc_entry("bluetooth", 0);
 }
 
-module_init(bluesleep_init);
+late_initcall(bluesleep_init);
 module_exit(bluesleep_exit);
 
 MODULE_DESCRIPTION("Bluetooth Sleep Mode Driver ver %s " VERSION);
