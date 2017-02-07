@@ -300,7 +300,7 @@ static int bluesleep_hci_event(struct notifier_block *this,
 }
 
 
-void  bluesleep_start_sleep_timer()
+void  bluesleep_start_sleep_timer(void)
 {
 	unsigned long irq_flags;
 
