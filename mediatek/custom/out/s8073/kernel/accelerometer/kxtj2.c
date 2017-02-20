@@ -2126,7 +2126,7 @@ static void __exit kxtj2_exit(void)
 //	platform_driver_unregister(&kxtj2_gsensor_driver);
 }
 /*----------------------------------------------------------------------------*/
-module_init(kxtj2_init);
+late_initcall(kxtj2_init);
 module_exit(kxtj2_exit);
 /*----------------------------------------------------------------------------*/
 MODULE_LICENSE("GPL");
