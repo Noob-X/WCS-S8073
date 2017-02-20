@@ -429,7 +429,7 @@ static int bluesleep_start(void)
 	set_bit(BT_PROTO, &flags);
      //  set_bit(BT_ASLEEP, &flags);
 	return 0;
-fail:
+// fail:
 	del_timer(&tx_timer);
 	atomic_inc(&open_count);
 
