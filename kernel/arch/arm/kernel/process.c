@@ -314,6 +314,7 @@ void machine_restart(char *cmd)
 	while (1);
 }
 
+#ifdef CONFIG_LOG_SHOW_EXTRA_REG_DATA
 /*
  * dump a block of kernel memory from around the given address
  */
@@ -384,6 +385,7 @@ static void show_extra_register_data(struct pt_regs *regs, int nbytes)
 	show_data(regs->ARM_r10 - nbytes, nbytes * 2, "R10");
 	set_fs(fs);
 }
+#endif /* CONFIG_LOG_SHOW_EXTRA_REG_DATA */
 
 void __show_regs(struct pt_regs *regs)
 {
@@ -445,7 +447,9 @@ void __show_regs(struct pt_regs *regs)
 	}
 #endif
 
+#ifdef CONFIG_LOG_SHOW_EXTRA_REG_DATA
 	show_extra_register_data(regs, 128);
+#endif
 }
 
 void show_regs(struct pt_regs * regs)
