@@ -21,8 +21,8 @@
 #define MODULE_WITH_INDEPENDENT_PORT_ID  36
 
 #define M4U_CLIENT_MODULE_NUM        M4U_CLNTMOD_MAX
-#define TOTAL_MVA_RANGE      0x40000000                              //total virtual address range: 1GB
-
+/*#define TOTAL_MVA_RANGE      0x40000000                              //total virtual address range: 1GB*/
+#define TOTAL_MVA_RANGE      0x20000000
 
 #define ACCESS_TYPE_TRANSLATION_FAULT  0
 #define ACCESS_TYPE_64K_PAGE           1
@@ -255,6 +255,12 @@ typedef struct _M4U_MOUDLE
 	struct task_struct* tsk;
 }M4U_MOUDLE_STRUCT;
 
+struct GET_TSK_STRUCT_ARGS
+{
+    void* task;
+    unsigned int oom_adj;
+};
+
 typedef enum
 {
     M4U_CACHE_FLUSH_BEFORE_HW_READ_MEM = 0,  // optimized, recommand to use
@@ -300,7 +306,7 @@ typedef struct _M4U_CACHE
 #define MTK_M4U_T_REGISTER_BUFFER     _IOW(MTK_M4U_MAGICNO, 22, int)
 #define MTK_M4U_T_CACHE_FLUSH_ALL     _IOW(MTK_M4U_MAGICNO, 23, int)
 #define MTK_M4U_T_GET_TSK_STRUCT     _IOW(MTK_M4U_MAGICNO, 24, int)
-
+#define MTK_M4U_T_PUT_TSK_STRUCT     _IOW(MTK_M4U_MAGICNO, 25, int)
 
 // Function pointer for kernel user
 // M4U is .ko module, can not export function to .o module
@@ -434,7 +440,7 @@ int m4u_query_mva(M4U_MODULE_ID_ENUM eModuleID,
 								  const unsigned int BufAddr, 
 								  const unsigned int BufSize, 
 								  unsigned int *pRetMVABuf,
-								  struct file * a_pstFile);
+								  struct file * a_pstFile) ;
 								  
 // m4u driver internal use ---------------------------------------------------
 //

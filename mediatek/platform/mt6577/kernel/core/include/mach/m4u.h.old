@@ -6,9 +6,7 @@
 #ifdef MTK_M4U_SUPPORT
 
 
-#if defined(CONFIG_ARCH_MT6577)
-    #define MTK_G2D_ENABLE_M4U
-#endif
+#define MTK_G2D_ENABLE_M4U
 #define MTK_DEBUG_ENABLE_M4U
 #define MTK_TVOUT_ENABLE_M4U
 #define MTK_LCDC_ENABLE_M4U
@@ -252,7 +250,6 @@ typedef struct _M4U_MOUDLE
     // manually insert page entry
 	unsigned int EntryMVA;						 // manual insert entry MVA
 	unsigned int Lock;							 // manual insert lock or not
-	struct task_struct* tsk;
 }M4U_MOUDLE_STRUCT;
 
 typedef enum
@@ -299,8 +296,6 @@ typedef struct _M4U_CACHE
 #define MTK_M4U_T_DUMP_PAGETABLE      _IOW(MTK_M4U_MAGICNO, 21, int)
 #define MTK_M4U_T_REGISTER_BUFFER     _IOW(MTK_M4U_MAGICNO, 22, int)
 #define MTK_M4U_T_CACHE_FLUSH_ALL     _IOW(MTK_M4U_MAGICNO, 23, int)
-#define MTK_M4U_T_GET_TSK_STRUCT     _IOW(MTK_M4U_MAGICNO, 24, int)
-
 
 // Function pointer for kernel user
 // M4U is .ko module, can not export function to .o module
@@ -430,7 +425,6 @@ int m4u_mau_get_physical_port(unsigned int* engineMask);
 // will check link list for mva rather than re-build pagetable by get_user_pages()
 // if can not find the VA in link list, will call m4u_alloc_mva() internally
 int m4u_query_mva(M4U_MODULE_ID_ENUM eModuleID, 
-                                struct task_struct *tsk,
 								  const unsigned int BufAddr, 
 								  const unsigned int BufSize, 
 								  unsigned int *pRetMVABuf,

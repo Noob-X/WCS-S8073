@@ -1,5 +1,6 @@
 #ifndef __MMPROFILE_INTERNAL_H__
 #define __MMPROFILE_INTERNAL_H__
+#ifdef MTK_MMPROFILE_SUPPORT // MMPROFILE_SUPPORT==yes
 
 #include <linux/mmprofile.h>
 
@@ -93,3 +94,5 @@ static void MMProfileStart(int start);
 }
 #endif
 #endif
+
+#endif // MMPROFILE_SUPPORT==yes

@@ -20,7 +20,7 @@
 #include <linux/xlog.h>
 #include <linux/mm.h>
 #include <linux/pagemap.h>
-#include <linux/m4u_profile.h>
+
 
 #ifdef MTK_M4U_DBG
 #define M4UDBG(string, args...)	xlog_printk(ANDROID_LOG_DEBUG, "M4U_K", string, ##args);
@@ -52,8 +52,7 @@ EXPORT_SYMBOL(pMlock_cnt);
 unsigned int mlock_cnt_size = 256*1024;
 EXPORT_SYMBOL(mlock_cnt_size);
 
-MMP_Event M4U_MMP_Events[PROFILE_MAX];
-EXPORT_SYMBOL(M4U_MMP_Events);
+
 
 void mlock_vma_page(struct page *page);
 void munlock_vma_page(struct page *page);
@@ -184,7 +183,6 @@ unsigned int m4u_user_v2p(unsigned int va)
 {
     unsigned int pageOffset = (va & (PAGE_SIZE - 1));
     pgd_t *pgd;
-    pud_t *pud;
     pmd_t *pmd;
     pte_t *pte;
     unsigned int pa;
@@ -207,15 +205,8 @@ unsigned int m4u_user_v2p(unsigned int va)
         M4UMSG("m4u_user_v2p(), va=0x%x, pgd invalid! \n", va);
         return 0;
     }
-
-    pud = pud_offset(pgd, va);
-    if(pud_none(*pud)||pud_bad(*pud))
-    {
-        M4UDBG("m4u_user_v2p(), va=0x%x, pud invalid! \n", va);
-        return 0;
-    }
-
-    pmd = pmd_offset(pud, va);
+    
+    pmd = pmd_offset(pgd, va);
     if(pmd_none(*pmd)||pmd_bad(*pmd))
     {
         M4UDBG("m4u_user_v2p(), va=0x%x, pmd invalid! \n", va);
@@ -323,32 +314,30 @@ int __m4u_get_user_pages(int eModuleID, struct task_struct *tsk, struct mm_struc
                          */
                         if (unlikely(fatal_signal_pending(current)))
                                 return i ? i : -ERESTARTSYS;
-                        MMProfileLogEx(M4U_MMP_Events[PROFILE_FOLLOW_PAGE], MMProfileFlagStart, eModuleID, start&(~0xFFF));
-                        page = follow_page(vma, start, foll_flags);
-                        MMProfileLogEx(M4U_MMP_Events[PROFILE_FOLLOW_PAGE], MMProfileFlagEnd, eModuleID, 0x1000);
-                        while (!page) {
+
+                        while (!(page = follow_page(vma, start, foll_flags))) {
                                 int ret;
 
                                 M4UDBG("Trying to allocate for %dth page(vaddr: 0x%08x)\n", i, start);
-                                MMProfileLogEx(M4U_MMP_Events[PROFILE_FORCE_PAGING], MMProfileFlagStart, eModuleID, start&(~0xFFF));
+
                                 ret = handle_mm_fault(mm, vma, start,
                                         (foll_flags & FOLL_WRITE) ?
                                         FAULT_FLAG_WRITE : 0);
-                                MMProfileLogEx(M4U_MMP_Events[PROFILE_FORCE_PAGING], MMProfileFlagEnd, eModuleID, 0x1000);
+
                                 if (ret & VM_FAULT_ERROR) {
                                         if (ret & VM_FAULT_OOM) {
                                                 M4UMSG("handle_mm_fault() error: no memory, aaddr:0x%08lx (%d pages are allocated), module=%d\n", 
                                                 start, i, eModuleID);
                                                 //m4u_dump_maps(start);
                                                 return i ? i : -ENOMEM;
-					                    }
+					}
                                         if (ret &
                                             (VM_FAULT_HWPOISON|VM_FAULT_SIGBUS)) {
                                                 M4UMSG("handle_mm_fault() error: invalide memory address, vaddr:0x%lx (%d pages are allocated), module=%d\n", 
                                                 start, i, eModuleID);
                                                 //m4u_dump_maps(start);
                                                 return i ? i : -EFAULT;
-					                    }
+					}
                                         BUG();
                                 }
                                 if (ret & VM_FAULT_MAJOR)
@@ -371,9 +360,6 @@ int __m4u_get_user_pages(int eModuleID, struct task_struct *tsk, struct mm_struc
                                 if ((ret & VM_FAULT_WRITE) &&
                                     !(vma->vm_flags & VM_WRITE))
                                         foll_flags &= ~FOLL_WRITE;
-                                MMProfileLogEx(M4U_MMP_Events[PROFILE_FOLLOW_PAGE], MMProfileFlagStart, eModuleID, start&(~0xFFF));
-                                page = follow_page(vma, start, foll_flags);
-                                MMProfileLogEx(M4U_MMP_Events[PROFILE_FOLLOW_PAGE], MMProfileFlagEnd, eModuleID, 0x1000);
                         }
                         if (IS_ERR(page)) {
                                 M4UMSG("handle_mm_fault() error: faulty page is returned, vaddr:0x%lx (%d pages are allocated), module=%d \n", 
@@ -383,14 +369,13 @@ int __m4u_get_user_pages(int eModuleID, struct task_struct *tsk, struct mm_struc
 			            }
                         if (pages) {
                                 pages[i] = page;
-                                MMProfileLogEx(M4U_MMP_Events[PROFILE_MLOCK], MMProfileFlagStart, eModuleID, start&(~0xFFF));
                                 if (trylock_page(page)) {
                                     mlock_vma_page(page);
                                     unlock_page(page);
                                 }
                                 if(PageMlocked(page)==0)
                                 {
-                                    M4UMSG("Can't mlock page\n");
+                                    M4UERR("Can't mlock page\n");
                                     dump_page(page);
                                 }
                                 else
@@ -408,7 +393,7 @@ int __m4u_get_user_pages(int eModuleID, struct task_struct *tsk, struct mm_struc
                                     //M4UMSG("lock page:\n");
                                     //dump_page(page);
                                 }
-                                MMProfileLogEx(M4U_MMP_Events[PROFILE_MLOCK], MMProfileFlagEnd, eModuleID, 0x1000);
+
 
                         }
                         if (vmas)
