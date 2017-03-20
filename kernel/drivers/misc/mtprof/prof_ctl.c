@@ -53,7 +53,7 @@ void setup_mtproc_info(struct task_struct *p, unsigned long long ts)
 	return;
 	}
 	*/   
-	mtproc = kmalloc(sizeof(struct mt_proc_struct), GFP_KERNEL);
+	mtproc = kmalloc(sizeof(struct mt_proc_struct), GFP_ATOMIC);
 	if(!mtproc)
 	{
 		printk("mtproc unable to kmalloc\n");
