@@ -594,7 +594,15 @@ do_DataAbort(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 		if (thread->cpu_excp == 1) {
 			thread->regs_on_excp = (void *)regs;
 		}
-		if (thread->cpu_excp >= 2) {
+		/*
+		 * NoteXXX: The data abort exception may happen twice
+		 *          when calling probe_kernel_address() in which.
+		 *          __copy_from_user_inatomic() is used and the
+		 *          fixup table lookup may be performed.
+		 *          Check if the nested panic happens via
+		 *          (cpu_excp >= 3).
+		 */
+		if (thread->cpu_excp >= 3) {
 			aee_stop_nested_panic(regs);
 		}
 	}
@@ -679,7 +687,15 @@ do_PrefetchAbort(unsigned long addr, unsigned int ifsr, struct pt_regs *regs)
 		if (thread->cpu_excp == 1) {
 			thread->regs_on_excp = (void *)regs;
 		}
-		if (thread->cpu_excp >= 2) {
+		/*
+		 * NoteXXX: The data abort exception may happen twice
+		 *          when calling probe_kernel_address() in which.
+		 *          __copy_from_user_inatomic() is used and the
+		 *          fixup table lookup may be performed.
+		 *          Check if the nested panic happens via
+		 *          (cpu_excp >= 3).
+		 */
+		if (thread->cpu_excp >= 3) {
 			aee_stop_nested_panic(regs);
 		}
 	}
