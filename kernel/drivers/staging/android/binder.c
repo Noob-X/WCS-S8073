@@ -3432,6 +3432,9 @@ static void binder_release_work(struct list_head *list)
 					"binder: undelivered transaction %d\n",
 					t->debug_id);
 				t->buffer->transaction = NULL;
+#ifdef BINDER_MONITOR
+				binder_cancel_bwdog(t);
+#endif
 				kfree(t);
 				binder_stats_deleted(BINDER_STAT_TRANSACTION);
 			}
