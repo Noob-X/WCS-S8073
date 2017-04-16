@@ -72,7 +72,10 @@ static struct workqueue_struct *binder_deferred_workqueue;
 /*	[DN #6]			|	Finally receive requester's confirmation from upper layer.			*/
 /************************************************************************************************************************/
 #define MTK_DEATH_NOTIFY_MONITOR	"v0.1"
+
+#if 0
 #define BINDER_MONITOR			"v0.2"
+#endif
 
 #ifdef BINDER_MONITOR
 #define MAX_SERVICE_NAME_LEN		32
@@ -1000,7 +1003,8 @@ out_unlock:
 	spin_unlock(&files->file_lock);
 	return -EBADF;
 }
-/*
+
+#ifndef BINDER_MONITOR
 static inline void binder_lock(const char *tag)
 {
 	trace_binder_lock(tag);
@@ -1013,7 +1017,8 @@ static inline void binder_unlock(const char *tag)
 	trace_binder_unlock(tag);
 	mutex_unlock(&binder_main_lock);
 }
-*/
+#endif
+
 static void binder_set_nice(long nice)
 {
 	long min_nice;
