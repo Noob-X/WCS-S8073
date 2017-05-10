@@ -1272,8 +1272,7 @@ static void musb_free(struct musb *musb)
  * @mregs: virtual address of controller registers,
  *	not yet corrected for platform-specific offsets
  */
-static int __init
-musb_init_controller(struct device *dev,void __iomem *ctrl)
+static int musb_init_controller(struct device *dev,void __iomem *ctrl)
 {
 	int			status;
 	struct musb		*musb;
@@ -1394,7 +1393,7 @@ fail1:
  * bridge to a platform device; this driver then suffices.
  */
 
-static int __init musb_probe(struct platform_device *pdev)
+static int musb_probe(struct platform_device *pdev)
 {
 	struct device	*dev = &pdev->dev;
 	int		status;
