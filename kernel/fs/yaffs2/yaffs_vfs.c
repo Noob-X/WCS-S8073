@@ -468,7 +468,7 @@ static int yaffs_sync_object(struct file *file, int datasync)
  * NB: POSIX says you can rename an object over an old object of the same name
  */
 static int yaffs_rename(struct inode *old_dir, struct dentry *old_dentry,
-			struct inode *new_dir, struct dentry *new_dentry)
+			struct inode *new_dir, struct dentry *new_dentry, unsigned int unused)
 {
 	struct yaffs_dev *dev;
 	int ret_val = YAFFS_FAIL;
@@ -530,7 +530,7 @@ static int yaffs_setattr(struct dentry *dentry, struct iattr *attr)
 		error = -EINVAL;
 
 	if (error == 0)
-		error = inode_change_ok(inode, attr);
+		error = setattr_prepare(dentry, attr);
 	if (error == 0) {
 		int result;
 		if (!error) {
@@ -564,6 +564,7 @@ static int yaffs_setattr(struct dentry *dentry, struct iattr *attr)
 }
 
 #ifdef CONFIG_YAFFS_XATTR
+#if 0
 static int yaffs_setxattr(struct dentry *dentry, const char *name,
 		   const void *value, size_t size, int flags)
 {
@@ -642,7 +643,7 @@ static int yaffs_removexattr(struct dentry *dentry, const char *name)
 
 	return error;
 }
-
+#endif
 static ssize_t yaffs_listxattr(struct dentry * dentry, char *buff, size_t size)
 {
 	struct inode *inode = dentry->d_inode;
@@ -680,10 +681,12 @@ static const struct inode_operations yaffs_dir_inode_operations = {
 	.rename = yaffs_rename,
 	.setattr = yaffs_setattr,
 #ifdef CONFIG_YAFFS_XATTR
+#if 0
 	.setxattr = yaffs_setxattr,
 	.getxattr = yaffs_getxattr,
-	.listxattr = yaffs_listxattr,
 	.removexattr = yaffs_removexattr,
+#endif
+	.listxattr = yaffs_listxattr,
 #endif
 };
 /*-----------------------------------------------------------------*/
@@ -1849,10 +1852,12 @@ static struct address_space_operations yaffs_file_address_operations = {
 static const struct inode_operations yaffs_file_inode_operations = {
 	.setattr = yaffs_setattr,
 #ifdef CONFIG_YAFFS_XATTR
+#if 0
 	.setxattr = yaffs_setxattr,
 	.getxattr = yaffs_getxattr,
-	.listxattr = yaffs_listxattr,
 	.removexattr = yaffs_removexattr,
+#endif
+	.listxattr = yaffs_listxattr,
 #endif
 };
 
@@ -1862,10 +1867,12 @@ static const struct inode_operations yaffs_symlink_inode_operations = {
 	.put_link = yaffs_put_link,
 	.setattr = yaffs_setattr,
 #ifdef CONFIG_YAFFS_XATTR
+#if 0
 	.setxattr = yaffs_setxattr,
 	.getxattr = yaffs_getxattr,
-	.listxattr = yaffs_listxattr,
 	.removexattr = yaffs_removexattr,
+#endif
+	.listxattr = yaffs_listxattr,
 #endif
 };
 
