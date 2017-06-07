@@ -1346,7 +1346,7 @@ static void terminate_walk(struct nameidata *nd)
  * so we keep a cache of "no, this doesn't need follow_link"
  * for the common case.
  */
-static inline int should_follow_link(struct inode *inode, int follow)
+static inline int do_follow_link(struct inode *inode, int follow)
 {
 	if (unlikely(!(inode->i_opflags & IOP_NOFOLLOW))) {
 		if (likely(inode->i_op->follow_link))
@@ -1382,7 +1382,7 @@ static inline int walk_component(struct nameidata *nd, struct path *path,
 		terminate_walk(nd);
 		return -ENOENT;
 	}
-	if (should_follow_link(inode, follow)) {
+	if (do_follow_link(inode, follow)) {
 		if (nd->flags & LOOKUP_RCU) {
 			if (unlikely(nd->path.mnt != path->mnt ||
 				     unlazy_walk(nd, path->dentry))) {
