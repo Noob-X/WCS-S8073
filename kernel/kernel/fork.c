@@ -994,9 +994,6 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
 #ifdef CONFIG_CGROUPS
 	init_rwsem(&sig->threadgroup_fork_lock);
 #endif
-#ifdef CONFIG_CPUSETS
-	seqcount_init(&tsk->mems_allowed_seq);
-#endif
 
 	sig->oom_adj = current->signal->oom_adj;
 	sig->oom_score_adj = current->signal->oom_score_adj;
@@ -1203,6 +1200,7 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 #ifdef CONFIG_CPUSETS
 	p->cpuset_mem_spread_rotor = NUMA_NO_NODE;
 	p->cpuset_slab_spread_rotor = NUMA_NO_NODE;
+	seqcount_init(&p->mems_allowed_seq);
 #endif
 #ifdef CONFIG_TRACE_IRQFLAGS
 	p->irq_events = 0;
