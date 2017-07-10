@@ -186,19 +186,18 @@ static inline int notifier_to_errno(int ret)
  */
  
 /* CPU notfiers are defined in include/linux/cpu.h. */
-
-/* netdevice notifiers are defined in include/linux/netdevice.h */
-
-/* reboot notifiers are defined in include/linux/reboot.h. */
-
-#define NETLINK_URELEASE	0x0001	/* Unicast netlink socket released */
-
 /* 
  * <20120604> marc.huang 
  * define MTK_CPU_HOTPLUG_DEBUG for cpu notify callback log 
  *
 #define MTK_CPU_HOTPLUG_DEBUG
 */
+/* netdevice notifiers are defined in include/linux/netdevice.h */
+
+/* reboot notifiers are defined in include/linux/reboot.h. */
+
+#define NETLINK_URELEASE	0x0001	/* Unicast netlink socket released */
+
 /* Hibernation and suspend events */
 #define PM_HIBERNATION_PREPARE	0x0001 /* Going to hibernate */
 #define PM_POST_HIBERNATION	0x0002 /* Hibernation finished */
