@@ -386,38 +386,7 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 
 	if (call_undef_hook(regs, instr) == 0)
 		goto do_undefinstr_exit;
-//loda
-        if (call_undef_hook(regs, instr) == 0)
-                goto do_undefinstr_exit;
-        //Place the SIGILL ICache Invalidate after the Debugger Undefined-Instruction Solution.
-        if (processor_mode(regs) == USR_MODE)
-        {//Only do it for User-Space Application.
-                printk("USR_MODE Undefined Instruction Address curr:%xh pc=%xh:%xh\n",(unsigned int)current,(unsigned int)pc,(unsigned int)prev_undefinstr_pc);
-                if(prev_undefinstr_pc!=pc || prev_undefinstr_curr!=(unsigned long)current)
-                {//If the current process or program counter is changed......renew the counter.
-                        printk("First Time Recovery curr:%xh pc=%xh:%xh\n",(unsigned int)current,(unsigned int)pc,(unsigned int)prev_undefinstr_pc);
-                        prev_undefinstr_pc=pc;
-                        prev_undefinstr_curr=(unsigned long)current;
-                        prev_undefinstr_counter=0;
-                        __cpuc_flush_icache_all();
-                        goto do_undefinstr_exit;
-                }
-                else if(prev_undefinstr_counter<1)
-                {
-                        printk("2nd Time Recovery curr:%xh pc=%xh:%xh\n",(unsigned int)current,(unsigned int)pc,(unsigned int)prev_undefinstr_pc);
-                        prev_undefinstr_counter++;
-                        __cpuc_flush_icache_all();
-                        goto do_undefinstr_exit;
-                }
-        }
-        prev_undefinstr_counter++;
-        if(prev_undefinstr_counter>=4)
-        {//2=first time SigILL,3=2nd time NE-SigILL,4=3rd time CoreDump-SigILL
-                prev_undefinstr_pc=0;
-                prev_undefinstr_curr=0;
-                prev_undefinstr_counter=0;
-        }
-        printk("Go to ARM Notify Die curr:%xh pc=%xh:%xh\n",(unsigned int)current,(unsigned int)pc,(unsigned int)prev_undefinstr_pc);
+
 #ifdef CONFIG_DEBUG_USER
 	if (user_debug & UDBG_UNDEFINED) {
 		printk(KERN_INFO "%s (%d): undefined instruction: pc=%p\n",
