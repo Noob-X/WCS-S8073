@@ -1564,8 +1564,8 @@ static int emmc_dump_read(unsigned char* buf, unsigned int len, unsigned int off
     /* maybe delete in furture */
     struct msdc_ioctl     msdc_ctl;
     unsigned int i;
-    unsigned int l_user_begin_num;
-    unsigned int l_dest_num;
+    unsigned int l_user_begin_num = 0;
+    unsigned int l_dest_num = 0;
     unsigned long long l_start_offset;
     unsigned int ret = SD_FALSE;
 
@@ -1642,8 +1642,8 @@ static int simple_emmc_dump_write(unsigned char* buf, unsigned int len, unsigned
     /* maybe delete in furture */
     struct msdc_ioctl     msdc_ctl;
     unsigned int i;
-    unsigned int l_user_begin_num;
-    unsigned int l_dest_num;
+    unsigned int l_user_begin_num = 0;
+    unsigned int l_dest_num = 0;
     unsigned long long l_start_offset;
     unsigned int ret = SD_FALSE;
 
@@ -1685,7 +1685,7 @@ static int simple_emmc_dump_write(unsigned char* buf, unsigned int len, unsigned
     }
 
     if (PartInfo[l_dest_num].size < (len + offset)) {
-        printk("write operation oversize!\n");
+        printk_once("write operation oversize!\n");
         return ret;
     }
 
