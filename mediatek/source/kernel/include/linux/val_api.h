@@ -648,6 +648,9 @@ VAL_RESULT_T eVideoVCodecCoreNumber(int *CPUNums);
 
 #endif
 
+VAL_RESULT_T eVideoVcodecGetCpuLoadingInfo (VAL_VCODEC_CPU_LOADING_INFO_T *a_prCpuLoadingInfo);
+VAL_RESULT_T eVideoVcodecSetCpuOppLimit (VAL_VCODEC_CPU_OPP_LIMIT_T *a_prCpuOppLimit);
+
 #ifdef __cplusplus
 }
 #endif

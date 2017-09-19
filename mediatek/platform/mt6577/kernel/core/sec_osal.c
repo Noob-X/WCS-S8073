@@ -14,11 +14,13 @@
 #include <linux/fs.h>
 #include <linux/mtd/partitions.h>
 #include <asm/uaccess.h>
-#include <linux/slab.h> 
+// #include <linux/slab.h>
 #include <linux/version.h>
+#include <linux/module.h>
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)
 #include <linux/mtd/nand.h>
 #endif
+#include <linux/vmalloc.h>
 
 /*****************************************************************************
  * MACRO
@@ -58,12 +60,14 @@ static struct file *g_osal_fp[OSAL_MAX_FP_COUNT] = {0};
  *****************************************************************************/
 void osal_kfree(void *buf)
 {
-    kfree(buf);
+//    kfree(buf);
+    vfree(buf);
 }
 
 void* osal_kmalloc(unsigned int size)
 {
-    return kmalloc(size,GFP_KERNEL);
+//    return kmalloc(size,GFP_KERNEL);
+    return vmalloc(size);
 }
 
 unsigned long osal_copy_from_user(void * to, void * from, unsigned long size)

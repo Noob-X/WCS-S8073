@@ -27,6 +27,9 @@ typedef enum{
 typedef enum {
 	ID_GET_MD_WAKEUP_SRC = 0,
 	ID_CCCI_DORMANCY = 1,
+    ID_LOCK_MD_SLEEP = 2,
+	ID_ACK_MD_SLEEP = 3,
+	ID_SSW_SWITCH_MODE = 4,
 }KERN_FUNC_ID;
 typedef int (*ccci_kern_cb_func_t)(char *buf, unsigned int len);
 

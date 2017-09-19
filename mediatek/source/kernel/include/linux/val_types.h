@@ -45,6 +45,7 @@ typedef unsigned int    VAL_HANDLE_T;    ///< handle type definition
 #define VAL_NULL        (0) ///< VAL_NULL = 0
 #define VAL_TRUE        (1) ///< VAL_TRUE = 1
 #define VAL_FALSE       (0) ///< VAL_FALSE = 0
+#define VCODEC_MULTI_THREAD	0
 
 /**
  * @par Enumeration
@@ -511,6 +512,10 @@ typedef struct
     VAL_VCODEC_OAL_MEM_STAUTS_T *pHWStatus;  ///< [OUT]    HW status based on input address.
 } VAL_VCODEC_OAL_HW_REGISTER_T;
 
+#if VCODEC_MULTI_THREAD
+#define VCODEC_THREAD_MAX_NUM   16
+#endif
+
 typedef struct
 {
     VAL_VCODEC_OAL_HW_REGISTER_T  *Oal_HW_reg;
@@ -520,8 +525,13 @@ typedef struct
     VAL_UINT32_T                       ObjId;
     VAL_EVENT_T               MT6575_IsrEvent;
     VAL_UINT32_T                       slotindex;
+#if VCODEC_MULTI_THREAD
+    VAL_UINT32_T                    u4VCodecThreadNum;
+    VAL_UINT32_T                    u4VCodecThreadID[VCODEC_THREAD_MAX_NUM];
+#else
     VAL_UINT32_T                       tid1;
     VAL_UINT32_T                       tid2;
+#endif
     VAL_UINT32_T                       u4NumOfRegister;    
     VAL_VCODEC_OAL_MEM_STAUTS_T   oalmem_status[OALMEM_STATUS_NUM];  // MAX 16 items could be read; //kernel space access register
     VAL_UINT32_T                  kva_u4HWIsCompleted;
@@ -540,10 +550,14 @@ typedef struct
 
 typedef struct
 {
+#if VCODEC_MULTI_THREAD
+    VAL_UINT32_T    u4VCodecThreadNum;
+    VAL_UINT32_T    u4VCodecThreadID[VCODEC_THREAD_MAX_NUM];
+#else
     VAL_UINT32_T    u4tid1;
     VAL_UINT32_T    u4tid2;
+#endif
 }VAL_VCODEC_THREAD_ID_T;
-
 
 typedef struct
 {
@@ -559,7 +573,6 @@ typedef struct
     int Loading;    //  [out]
 } VAL_VCODEC_CORE_LOADING_T;
 
-
 typedef struct
 {
     int limited_freq;         // [in]
@@ -567,8 +580,15 @@ typedef struct
     int enable;              // [in]
 } VAL_VCODEC_CPU_OPP_LIMIT_T;
 
+#if VCODEC_MULTI_THREAD
+typedef struct
+{
+    VAL_UINT32_T u4VCodecThreadNum;
+    long u4VCodecThreadID[VCODEC_THREAD_MAX_NUM];
+} VAL_VCODEC_THREAD_INFO;
+#endif
 
-#endif 
+#endif
 
 #ifdef __cplusplus
 }
