@@ -8,7 +8,7 @@
 #include <linux/kallsyms.h>
 #include <linux/xlog.h>
 
-#define ICS_KERNEL	1
+
 #define AE_INVALID              0xAEEFF000
 #define AE_NOT_AVAILABLE        0xAEE00000
 #define AE_DEFAULT              0xAEE00001
@@ -108,14 +108,9 @@ struct aee_process_bt {
 
 #define AEEIOCTL_DAL_SHOW       _IOW('p', 0x01, struct aee_dal_show) /* Show string on DAL layer  */
 #define AEEIOCTL_DAL_CLEAN      _IO('p', 0x02) /* Clear DAL layer */
-#if ICS_KERNEL
+/* AEEIOCTL_BEEP 0x03 Beep (ms), removed */
 #define AEEIOCTL_SETCOLOR       _IOW('p', 0x04, struct aee_dal_setcolor) /* RGB color 0x00RRGGBB */
 #define AEEIOCTL_GET_PROCESS_BT _IOW('p', 0x05, struct aee_process_bt)
-#else
-#define AEEIOCTL_SETCOLOR       _IOW('p', 0x03, struct aee_dal_setcolor) /* RGB color 0x00RRGGBB */
-#define AEEIOCTL_GET_PROCESS_BT _IOW('p', 0x04, struct aee_process_bt)
-#define AEEIOCTL_GET_SMP_INFO   _IOR('p', 0x05, int)
-#endif /* !ICS_KERNEL */
 /* AED debug support */
 
 struct proc_dir_entry;
