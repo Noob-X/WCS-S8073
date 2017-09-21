@@ -16,6 +16,7 @@
 #include <linux/workqueue.h>
 
 #include "timed_output.h"
+
 #include <linux/hrtimer.h>
 #include <linux/err.h>
 #include <linux/platform_device.h>
@@ -25,7 +26,7 @@
 #include <linux/timer.h>
 
 #include <mach/mt6577_typedefs.h>
-#include <mach/mt6577_pm_ldo.h>
+//#include <mach/mt6577_pm_ldo.h>
 
 #include <cust_vibrator.h>
 
@@ -81,13 +82,13 @@ static int vibr_Enable(void)
 {
 	if(!ldo_state) {
 		printk("[vibrator]vibr_Enable \n");
-		/*
-		if(hwPowerOn(MT65XX_POWER_LDO_VIBR, VOL_2800, "VIBR")) {
+
+		if(hwPowerOn(MT65XX_POWER_LDO_VIBR, VOL_2500, "VIBR")) {
 			ldo_state=1;
 		}
-		*/
+
 		dct_pmic_VIBR_enable(1);
-		ldo_state=1;
+		//ldo_state=1;
 	}
 	return 0;
 }
@@ -96,13 +97,13 @@ static int vibr_Disable(void)
 {
 	if(ldo_state) {
 		printk("[vibrator]vibr_Disable \n");
-		/*
+
 		if(hwPowerDown(MT65XX_POWER_LDO_VIBR, "VIBR")) {
 			ldo_state=0;
 		}
-		*/
+
 		dct_pmic_VIBR_enable(0);
-		ldo_state=0;
+		//ldo_state=0;
 	}
    	return 0;
 }
@@ -129,11 +130,14 @@ static int vibrator_get_time(struct timed_output_dev *dev)
 
 static void vibrator_enable(struct timed_output_dev *dev, int value)
 {
-		unsigned long   flags;
+		unsigned long flags;
+
 #if 1
 		struct vibrator_hw* hw = get_cust_vibrator_hw(); 
 
 #endif
+		printk("[vibrator]vibrator_enable: vibrator first in value = %d\n", value);
+
 		spin_lock_irqsave(&vibe_lock, flags);
 		while(hrtimer_cancel(&vibe_timer))
                 {
