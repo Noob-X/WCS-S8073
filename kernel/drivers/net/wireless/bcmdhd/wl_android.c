@@ -354,7 +354,7 @@ static int wl_android_get_p2p_dev_addr(struct net_device *ndev, char *command, i
  */
 
 //Ivan added
-void wl_android_wifi_set_fail()
+void wl_android_wifi_set_fail(void)
 {
 	DHD_ERROR(("Ivan %s!\n", __FUNCTION__));    
 //	dhd_customer_gpio_wlan_ctrl(WLAN_RESET_OFF);

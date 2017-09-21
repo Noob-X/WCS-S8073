@@ -45,7 +45,7 @@ int wl_android_wifi_on(struct net_device *dev);
 int wl_android_wifi_off(struct net_device *dev);
 int wl_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd);
 //Ivan added
-void wl_android_wifi_set_fail();
+void wl_android_wifi_set_fail(void);
 
 #if defined(CONFIG_WIFI_CONTROL_FUNC)
 int wl_android_wifictrl_func_add(void);
