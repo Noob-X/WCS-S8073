@@ -434,7 +434,9 @@ static char dhd_version[] = "Dongle Host Driver, version " EPI_VERSION_STR
 static void dhd_net_if_lock_local(dhd_info_t *dhd);
 static void dhd_net_if_unlock_local(dhd_info_t *dhd);
 #if !defined(AP) && defined(WLP2P)
+#if 0
 static u32 dhd_concurrent_fw(dhd_pub_t *dhd);
+#endif
 #endif 
 
 #ifdef WLMEDIA_HTSF
@@ -2902,6 +2904,7 @@ dhd_bus_start(dhd_pub_t *dhdp)
  * firmware and accordingly enable concurrent mode (Apply P2P settings). SoftAP firmware
  * would still be named as fw_bcmdhd_apsta.
  */
+#if 0
 static u32
 dhd_concurrent_fw(dhd_pub_t *dhd)
 {
@@ -2925,6 +2928,7 @@ dhd_concurrent_fw(dhd_pub_t *dhd)
 	}
 	return 0;
 }
+#endif
 #endif 
 int
 dhd_preinit_ioctls(dhd_pub_t *dhd)
