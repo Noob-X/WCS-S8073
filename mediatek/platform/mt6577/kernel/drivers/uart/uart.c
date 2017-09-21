@@ -235,7 +235,7 @@ static struct mtk_uart_vfifo mtk_uart_vfifo_port[] = {
 /* uart control blocks */
 static struct mtk_uart mtk_uarts[UART_NR];
 /*---------------------------------------------------------------------------*/
-static int  mtk_uart_init_ports(void);
+static int __init mtk_uart_init_ports(void);
 static void mtk_uart_start_tx(struct uart_port *port);
 static void mtk_uart_stop_tx(struct uart_port *port);
 static void mtk_uart_enable_intrs(struct mtk_uart *uart, long mask);
@@ -350,7 +350,7 @@ struct mtuart_sysobj {
     .console_enable = ATOMIC_INIT(1),
 };
 /*---------------------------------------------------------------------------*/
-int mtk_uart_sysfs(void) 
+static int __init mtk_uart_sysfs(void)
 {
     struct mtuart_sysobj *obj = &mtk_uart_sysobj;
     int idx;
@@ -362,7 +362,7 @@ int mtk_uart_sysfs(void)
     atomic_set(&obj->sysrq, 0);    
 #endif
 #if defined(ENABLE_VFIFO)
-    for (idx = 0; idx < ARRAY_SIZE(obj->vffLen); idx++)
+    for (idx = 0; idx < ARRAY_SIZE(mtk_uart_vfifo_port); idx++)
         atomic_set(&obj->vffLen[idx], mtk_uart_vfifo_port[idx].size);
 #endif
     atomic_set(&obj->console_enable, 1);
@@ -3645,7 +3645,7 @@ static int mtk_uart_resume(struct platform_device *pdev)
 /*---------------------------------------------------------------------------*/
 #endif /*CONFIG_PM*/
 /*---------------------------------------------------------------------------*/
-static int mtk_uart_init_ports(void)
+static int __init mtk_uart_init_ports(void)
 {
     int i;
     struct mtk_uart *uart;
