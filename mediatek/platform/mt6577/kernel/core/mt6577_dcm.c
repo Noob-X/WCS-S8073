@@ -801,17 +801,8 @@ static void noinline go_to_idle(void)
     idle_after_wfi(cpu);
 }
 
-static int hwe_protect_dummy(int cpunum)
-{
-    printk(KERN_ERR "**Cannot find HWE module**\n");
-    return 0;    
-}
-
 static int arch_idle_count = 0;
-#define ARCH_IDLE_COUNT_MAX 5000
-
-static int (*hwe_protect)(int) = &hwe_protect_dummy;
-EXPORT_SYMBOL(hwe_protect);
+#define ARCH_IDLE_COUNT_MAX 10000
 
 void arch_idle(void)
 {
@@ -821,8 +812,32 @@ void arch_idle(void)
         arch_idle_count++;
         if (arch_idle_count >= ARCH_IDLE_COUNT_MAX)
         {
-            if ((*hwe_protect)(num_online_cpus()) == -1)
-                printk(KERN_ERR "Detect Conflict: ARMPLL = 0x%x, CPU NUM = %d\n", DRV_Reg32(ARMPLL_CON0), num_online_cpus());
+            if ((*((volatile UINT32 *)0xF1019100) & (0x1 << 23)) && ((*((volatile UINT32 *)0xF1019100) & (0x1 << 20)) == 0))
+            {
+                if (0x5CA0 < *((volatile UINT32 *)ARMPLL_CON0))
+                    printk(KERN_ERR "0xF0007100 should be 0x5CA0, but now it is 0x%x\n", *((volatile UINT32 *)ARMPLL_CON0));
+            }
+            else
+            {
+                if (*((volatile UINT32 *)0xF1019100) & (0x1 << 12))
+                {
+                    if ((*((volatile UINT32 *)0xF1019100) & (0x1 << 17)) && ((*((volatile UINT32 *)0xF1019100) & (0x1 << 16)) == 0))
+                    {
+                        if (0x5CA0 < *((volatile UINT32 *)ARMPLL_CON0))
+                            printk(KERN_ERR "0xF0007100 should be 0x5CA0, but now it is 0x%x\n", *((volatile UINT32 *)ARMPLL_CON0));
+                    }
+                    else
+                    {
+                        if (0x4CA0 < *((volatile UINT32 *)ARMPLL_CON0))
+                            printk(KERN_ERR "0xF0007100 should be 0x4CA0, but now it is 0x%x\n", *((volatile UINT32 *)ARMPLL_CON0));
+                    }
+                }
+                else
+                {
+                    if (0x4CA0 < *((volatile UINT32 *)ARMPLL_CON0))
+                        printk(KERN_ERR "0xF0007100 should be 0x4CA0, but now it is 0x%x\n", *((volatile UINT32 *)ARMPLL_CON0));
+                }
+            }
             arch_idle_count = 0;
         }
 #ifdef CONFIG_SMP
