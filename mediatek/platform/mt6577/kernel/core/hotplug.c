@@ -15,6 +15,7 @@ extern void mpcore_wk_wdt_stop(void);
 extern void wk_stop_kick_cpu(int cpu);
 #endif
 
+#if 0
 static void hwe_init_dummy(int cpunum)
 {
     return;    
@@ -22,6 +23,8 @@ static void hwe_init_dummy(int cpunum)
 
 static void (*hwe_init)(int) = &hwe_init_dummy;
 EXPORT_SYMBOL(hwe_init);
+#endif
+
 static DEFINE_SPINLOCK(cpu1_pwr_ctr_lock);
 
 
@@ -79,7 +82,7 @@ void power_on_cpu1(void)
     cpu1_killed = 0;
     mb();
     
-    (*hwe_init)(2);
+//    (*hwe_init)(2);
     
     /* 1. Set RST_CTL0[1] = 1 */
     REG_WRITE(RST_CTL0, REG_READ(RST_CTL0) | 0x00000002);
@@ -163,7 +166,7 @@ void power_off_cpu1(void)
     
     mb();
     
-    (*hwe_init)(1);
+//    (*hwe_init)(1);
     
     cpu1_killed = 1;
     mb();
