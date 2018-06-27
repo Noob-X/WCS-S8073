@@ -566,10 +566,13 @@ static int __init ip6_queue_init(void)
 {
 	int status = -ENOMEM;
 	struct proc_dir_entry *proc __maybe_unused;
+	struct netlink_kernel_cfg cfg = {
+		.input	= ipq_rcv_skb,
+	};
 
 	netlink_register_notifier(&ipq_nl_notifier);
-	ipqnl = netlink_kernel_create(&init_net, NETLINK_IP6_FW, 0,
-			              ipq_rcv_skb, NULL, THIS_MODULE);
+	ipqnl = netlink_kernel_create(&init_net, NETLINK_IP6_FW,
+			              THIS_MODULE, &cfg);
 	if (ipqnl == NULL) {
 		printk(KERN_ERR "ip6_queue: failed to create netlink socket\n");
 		goto cleanup_netlink_notifier;
