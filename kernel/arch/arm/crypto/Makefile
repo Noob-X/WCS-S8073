@@ -2,6 +2,14 @@
 # Arch-specific CryptoAPI modules.
 #
 
+ifeq ($(CONFIG_CRYPTO_AES_ARM_BS),y)
+KBUILD_AFLAGS	+= -DCONFIG_ARM_ASM_UNIFIED
+endif
+
+ifeq ($(CONFIG_CRYPTO_SHA1_ARM_NEON),y)
+KBUILD_AFLAGS	+= -DCONFIG_ARM_ASM_UNIFIED
+endif
+
 obj-$(CONFIG_CRYPTO_AES_ARM) += aes-arm.o
 obj-$(CONFIG_CRYPTO_AES_ARM_BS) += aes-arm-bs.o
 obj-$(CONFIG_CRYPTO_SHA1_ARM) += sha1-arm.o
